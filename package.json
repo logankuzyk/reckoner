@@ -1,0 +1,30 @@
+{
+  "name": "odd-ophidian",
+  "description": "Logan Kuzyk's Spring 2021 Battlesnake",
+  "version": "0.0.0",
+  "private": true,
+  "author": "logankuzyk",
+  "repository": "https://github.com/logankuzyk/odd-ophidian",
+  "licenses": [
+    {
+      "type": "WTFPL",
+      "url": "http://www.wtfpl.net/txt/copying/"
+    }
+  ],
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cross-env": "^5.2.0",
+    "express": "^4.16.4",
+    "morgan": "^1.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.4"
+  },
+  "main": "index.js",
+  "engines": {
+    "node": ">=10.0"
+  },
+  "scripts": {
+    "start": "cross-env PORT=8080 node index.js"
+  }
+}
