@@ -18,13 +18,16 @@
     "morgan": "^1.9.1"
   },
   "devDependencies": {
-    "nodemon": "^1.19.4"
+    "nodemon": "^1.19.4",
+    "prettier": "2.2.1"
   },
   "main": "index.js",
   "engines": {
     "node": ">=10.0"
   },
   "scripts": {
-    "start": "cross-env PORT=8080 node src/index.js"
+    "start": "cross-env PORT=8080 node src/index.js",
+    "format": "pretter --write ./src",
+    "deploy": "gcloud app deploy"
   }
 }
