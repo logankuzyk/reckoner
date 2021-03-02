@@ -5,12 +5,6 @@
   "private": true,
   "author": "logankuzyk",
   "repository": "https://github.com/logankuzyk/odd-ophidian",
-  "licenses": [
-    {
-      "type": "WTFPL",
-      "url": "http://www.wtfpl.net/txt/copying/"
-    }
-  ],
   "dependencies": {
     "body-parser": "^1.18.3",
     "cross-env": "^5.2.0",
