@@ -21,7 +21,7 @@ const fallbackHandler = (req, res, next) => {
 
   // Short-circuit favicon requests
   if (req.baseUrl === '/favicon.ico') {
-    res.set({'Content-Type': 'image/x-icon'})
+    res.set({ 'Content-Type': 'image/x-icon' })
     res.status(200)
     res.end()
     return next()

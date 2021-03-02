@@ -1,6 +1,4 @@
-
-
 module.exports = (apiRequest) => {
-  let message = "right";
-  return message;
-};
+  let message = 'right'
+  return message
+}
