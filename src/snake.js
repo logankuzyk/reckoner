@@ -1,4 +1,4 @@
 module.exports = (apiRequest) => {
-  let message = 'right'
-  return message
-}
+  let board = makeBoard(apiRequest);
+  return message;
+};
