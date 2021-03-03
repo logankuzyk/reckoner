@@ -22,10 +22,10 @@ app.post('/start', (request, response) => {
   return response.status(200).json({});
 });
 
-app.post('/move', async (request, response) => {
+app.post('/move', (request, response) => {
   const oddOphidian = new OddOphidian(request.body)
   const data = {
-    move: await oddOphidian.move,
+    move: oddOphidian.move,
   };
 
   return response.status(200).json(data);
