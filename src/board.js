@@ -1,6 +1,6 @@
 class Board {
   constructor(apiRequest) {
-    this.board = this.makeBoard(apiRequest);
+    this.grid = this.makeBoard(apiRequest);
     this.loadGamePieces(apiRequest);
   }
   // Coordinate parameter is the same format as a single body element of a snake (for example).
@@ -12,9 +12,9 @@ class Board {
   }
 
   isNextToFood(chess) {
-    let tile = this.board.get(chess);
+    let tile = this.grid.get(chess);
     for (let dir of ['left', 'right', 'up', 'down']) {
-      if (tile[dir] !== null && this.board.get(tile[dir]).food) {
+      if (tile[dir] !== null && this.grid.get(tile[dir]).food) {
         return tile.coord;
       }
     }
@@ -25,7 +25,7 @@ class Board {
 
   loadGamePieces(apiRequest) {
     apiRequest.board.food.forEach((food) => {
-      let tile = this.board.get(this.coordToChess(food));
+      let tile = this.grid.get(this.coordToChess(food));
       tile.food = true;
     });
     apiRequest.board.snakes.forEach((snake) => {
@@ -41,7 +41,7 @@ class Board {
       }
       for (i; i < snake.body.length; i++) {
         let body = snake.body[i];
-        let tile = this.board.get(this.coordToChess(body));
+        let tile = this.grid.get(this.coordToChess(body));
         tile.solid = true;
       }
     });
