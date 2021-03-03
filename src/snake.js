@@ -1,7 +1,9 @@
 class Snake {
-  constructor(snake, board) {
-    this.length = apiRequest.you.body.length;
-    this.head = this.board.get(coordToChess(apiRequest.you.body[0]));
+  constructor(snake) {
+    this.length = snake.body.length;
+    this.health = snake.health;
+    // Array of chess notation strings
+    this.body = [];
   }
 }
 
