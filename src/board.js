@@ -1,6 +1,11 @@
+const Snake = require("./snake")
+const Tile = require("./tile")
+
 class Board {
   constructor(apiRequest) {
     this.grid = this.makeBoard(apiRequest);
+    // [snake.id, Snake]
+    this.snakes = new Map();
     this.loadGamePieces(apiRequest);
   }
   // Coordinate parameter is the same format as a single body element of a snake (for example).
@@ -29,9 +34,11 @@ class Board {
       tile.food = true;
     });
     apiRequest.board.snakes.forEach((snake) => {
+      let snakeObject = new Snake(snake)
       let i = 0;
 
       if (this.isNextToFood(this.coordToChess(snake.body[0]))) {
+        // 🚨🚨 ASSUMPTION: a snake will eat food if it's directly next to it
         snake.body.unshift(this.isNextToFood(this.coordToChess(snake.body[0])));
       }
 
@@ -43,51 +50,19 @@ class Board {
         let body = snake.body[i];
         let tile = this.grid.get(this.coordToChess(body));
         tile.solid = true;
+        snakeObject.body.unshift(this.coordToChess(body))
       }
+      this.snakes.set(snake.id, snakeObject)
     });
   }
 
   makeBoard(apiRequest) {
     let board = new Map();
-    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
     for (let x = 1; x <= apiRequest.board.width; x++) {
       for (let y = 1; y <= apiRequest.board.height; y++) {
-        // Setting direction IDs for each tile object.
-        let left, right, up, down;
-        if (x == 1) {
-          left = null;
-        } else {
-          left = `${alphabet.charAt(x - 2)}${String(y)}`;
-        }
-
-        if (x == apiRequest.board.width) {
-          right = null;
-        } else {
-          right = `${alphabet.charAt(x)}${String(y)}`;
-        }
-
-        if (y == 1) {
-          down = null;
-        } else {
-          down = `${alphabet.charAt(x - 1)}${String(y - 1)}`;
-        }
-
-        if (y == apiRequest.board.height) {
-          up = null;
-        } else {
-          up = `${alphabet.charAt(x - 1)}${String(y + 1)}`;
-        }
-
-        board.set(`${alphabet.charAt(x - 1)}${String(y)}`, {
-          coord: { x: x - 1, y: y - 1 },
-          left,
-          right,
-          up,
-          down,
-          solid: false,
-          food: false,
-        });
+        let tile = new Tile(x, y, apiRequest.board.width, apiRequest.board.height)
+        board.set(tile.chess, tile);
       }
     }
 
