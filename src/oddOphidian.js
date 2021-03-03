@@ -1,17 +1,17 @@
 const Board = require('./board');
+const Snake = require('./snake');
 
-class OddOphidian {
+class OddOphidian extends Snake {
   constructor(apiRequest) {
+    super(apiRequest.you)
     this.board = new Board(apiRequest);
-    this.length = apiRequest.you.body.length;
-    this.head = this.board.get(coordToChess(apiRequest.you.body[0]));
+    this.head = this.board.grid.get(this.body[0])
+    this.move = this.weighTheConsequences();
+  }
+
+  weighTheConsequences() {
+    return "right";
   }
 }
 
 module.exports = OddOphidian;
-
-// module.exports = (apiRequest) => {
-//   let board = makeBoard(apiRequest);
-//   console.log(board);
-//   return message;
-// };
