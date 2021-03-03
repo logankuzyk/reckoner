@@ -2,7 +2,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const logger = require('morgan');
 const app = express();
-const snake = require('./snake');
+const OddOphidian = require('./OddOphidian');
 const {
   fallbackHandler,
   notFoundHandler,
@@ -22,9 +22,10 @@ app.post('/start', (request, response) => {
   return response.status(200).json({});
 });
 
-app.post('/move', (request, response) => {
+app.post('/move', async (request, response) => {
+  const oddOphidian = new OddOphidian(request.body)
   const data = {
-    move: snake(request.body),
+    move: await oddOphidian.move,
   };
 
   return response.status(200).json(data);
