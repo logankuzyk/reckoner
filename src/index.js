@@ -23,7 +23,7 @@ app.post('/start', (request, response) => {
 });
 
 app.post('/move', (request, response) => {
-  const oddOphidian = new OddOphidian(request.body)
+  const oddOphidian = new OddOphidian(request.body);
   const data = {
     move: oddOphidian.move,
   };

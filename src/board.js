@@ -32,7 +32,7 @@ class Board {
       let i = 0;
 
       if (this.isNextToFood(this.coordToChess(snake.body[0]))) {
-        snake.body.unshift(this.isNextToFood(this.coordToChess(snake.body[0])))
+        snake.body.unshift(this.isNextToFood(this.coordToChess(snake.body[0])));
       }
 
       if (snake.body.length < apiRequest.you.body.length) {
@@ -80,7 +80,7 @@ class Board {
         }
 
         board.set(`${alphabet.charAt(x - 1)}${String(y)}`, {
-          coord: {x: x - 1, y: y - 1},
+          coord: { x: x - 1, y: y - 1 },
           left,
           right,
           up,
