@@ -1,26 +1,51 @@
 class Board {
   constructor(apiRequest) {
     this.board = this.makeBoard(apiRequest);
+    this.loadGamePieces(apiRequest);
   }
   // Coordinate parameter is the same format as a single body element of a snake (for example).
   // Chess notation starts at 1, coordinate notation starts at 0.
-  static coordToChess(coord) {
+  coordToChess(coord) {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
     return `${alphabet.charAt(coord.x)}${String(coord.y + 1)}`;
-  };
+  }
 
   isNextToFood(chess) {
-    let tile = board.get(chess);
-    for (let dir of [left, right, up, down]) {
-      if (tile && tile[dir].food) {
-        return true;
+    let tile = this.board.get(chess);
+    for (let dir of ['left', 'right', 'up', 'down']) {
+      if (tile[dir] !== null && this.board.get(tile[dir]).food) {
+        return tile.coord;
       }
     }
-    return false;
+    return null;
   }
 
   displayBoard() {}
+
+  loadGamePieces(apiRequest) {
+    apiRequest.board.food.forEach((food) => {
+      let tile = this.board.get(this.coordToChess(food));
+      tile.food = true;
+    });
+    apiRequest.board.snakes.forEach((snake) => {
+      let i = 0;
+
+      if (this.isNextToFood(this.coordToChess(snake.body[0]))) {
+        snake.body.unshift(this.isNextToFood(this.coordToChess(snake.body[0])))
+      }
+
+      if (snake.body.length < apiRequest.you.body.length) {
+        // Snake is prey, head is not "solid"
+        i++;
+      }
+      for (i; i < snake.body.length; i++) {
+        let body = snake.body[i];
+        let tile = this.board.get(this.coordToChess(body));
+        tile.solid = true;
+      }
+    });
+  }
 
   makeBoard(apiRequest) {
     let board = new Map();
@@ -55,6 +80,7 @@ class Board {
         }
 
         board.set(`${alphabet.charAt(x - 1)}${String(y)}`, {
+          coord: {x: x - 1, y: y - 1},
           left,
           right,
           up,
@@ -64,30 +90,6 @@ class Board {
         });
       }
     }
-
-    apiRequest.board.food.forEach((food) => {
-      let tile = board.get(coordToChess(food));
-      tile.food = true;
-    });
-    apiRequest.board.snakes.forEach((snake) => {
-      let i = 0;
-      let lengthNextTurn = snake.body.length;
-
-      if (isNextToFood(coordToChess(snake.body[0]))) {
-        lengthNextTurn++;
-      }
-
-      if (lengthNextTurn < apiRequest.you.body.length) {
-        // Snake is prey, head is not "solid"
-        i++;
-      }
-
-      for (i; i < lengthNextTurn; i++) {
-        let body = snake.body[i];
-        let tile = board.get(coordToChess(body));
-        tile.solid = true;
-      }
-    });
 
     return board;
   }
