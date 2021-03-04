@@ -1,5 +1,5 @@
-const Snake = require("./snake")
-const Tile = require("./tile")
+const Snake = require('./snake');
+const Tile = require('./tile');
 
 class Board {
   constructor(apiRequest) {
@@ -34,7 +34,7 @@ class Board {
       tile.food = true;
     });
     apiRequest.board.snakes.forEach((snake) => {
-      let snakeObject = new Snake(snake)
+      let snakeObject = new Snake(snake);
       let i = 0;
 
       if (this.isNextToFood(this.coordToChess(snake.body[0]))) {
@@ -50,9 +50,9 @@ class Board {
         let body = snake.body[i];
         let tile = this.grid.get(this.coordToChess(body));
         tile.solid = true;
-        snakeObject.body.unshift(this.coordToChess(body))
+        snakeObject.body.unshift(this.coordToChess(body));
       }
-      this.snakes.set(snake.id, snakeObject)
+      this.snakes.set(snake.id, snakeObject);
     });
   }
 
@@ -61,7 +61,12 @@ class Board {
 
     for (let x = 1; x <= apiRequest.board.width; x++) {
       for (let y = 1; y <= apiRequest.board.height; y++) {
-        let tile = new Tile(x, y, apiRequest.board.width, apiRequest.board.height)
+        let tile = new Tile(
+          x,
+          y,
+          apiRequest.board.width,
+          apiRequest.board.height,
+        );
         board.set(tile.chess, tile);
       }
     }
