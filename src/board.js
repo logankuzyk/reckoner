@@ -52,7 +52,11 @@ class Board {
         tile.solid = true;
         snakeObject.body.unshift(this.coordToChess(body));
       }
-      this.snakes.set(snake.id, snakeObject);
+      if (snake.body[0].x == apiRequest.you.body[0].x && snake.body[0].y == apiRequest.you.body[0].y) {
+        this.snakes.set("me", snakeObject)
+      } else {
+        this.snakes.set(snake.id, snakeObject);
+      }
     });
   }
 
