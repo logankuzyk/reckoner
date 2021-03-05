@@ -1,6 +1,7 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const logger = require('morgan');
+const fs = require('fs');
 const app = express();
 const OddOphidian = require('./oddOphidian');
 const {
@@ -23,6 +24,7 @@ app.post('/start', (request, response) => {
 });
 
 app.post('/move', (request, response) => {
+  fs.appendFile(__dirname + './tests/request.json', request.body);
   const oddOphidian = new OddOphidian(request.body);
   const data = {
     move: oddOphidian.move,
