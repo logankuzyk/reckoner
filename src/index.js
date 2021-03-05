@@ -24,10 +24,6 @@ app.post('/start', (request, response) => {
 });
 
 app.post('/move', (request, response) => {
-  fs.appendFile(__dirname + './tests/request.json', request.body, (err) => {
-    if (err) throw err;
-    console.log('Saved!');
-  });
   const oddOphidian = new OddOphidian(request.body);
   const data = {
     move: oddOphidian.move,
