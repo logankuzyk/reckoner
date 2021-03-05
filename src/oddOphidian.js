@@ -2,7 +2,7 @@ const Board = require('./board');
 
 class OddOphidian {
   constructor(apiRequest) {
-    this.minMaxDepth = 3;
+    this.minMaxDepth = 1;
     this.board = new Board(apiRequest);
     this.head = this.board.grid.get(this.board.snakes.get('me').body[0]);
     this.possibleMoves = ['left', 'right', 'up', 'down'];
@@ -12,17 +12,22 @@ class OddOphidian {
   evaluatePosition(board) {
     let me = board.snakes.get('me');
 
-    let snake = board.snakes.values();
+    let iterator = board.snakes.values();
     let targetSnake;
     let scarySnakeTail;
     let score;
 
-    while (!snake.done) {
-      if (snake.value.length + 1 < me.length) {
-        targetSnake = snake.body[0];
+    while (true) {
+      let snake = iterator.next();
+      if (snake.done) {
+        break;
+      }
+
+      if (snake.value.body.length + 1 < me.body.length) {
+        targetSnake = snake.value.body[0];
         break;
       } else {
-        scarySnakeTail = snake.body[snake.body.length - 1];
+        scarySnakeTail = snake.value.body[snake.value.body.length - 1];
       }
     }
 
@@ -37,18 +42,25 @@ class OddOphidian {
 
     if (targetSnake) {
       turnsUntilKill = board.lengthOfPath(me.body[0], targetSnake);
+    } else {
+      turnsUntilKill = 0;
     }
     if (scarySnakeTail) {
       turnsUntilOtherTail = board.lengthOfPath(me.body[0], scarySnakeTail);
+    } else {
+      turnsUntilOtherTail = 0;
     }
-
+    // console.log(`turn until food ${turnsUntilFood}`)
+    // console.log(`turns until tail ${turnsUntilTail}`)
+    // console.log(`turns until kill ${turnsUntilKill}`)
+    // console.log(`turns until other tail ${turnsUntilOtherTail}`)
     score = -(
       turnsUntilFood +
       turnsUntilTail +
       turnsUntilKill +
       turnsUntilOtherTail
     );
-
+    // console.log(score)
     return score;
   }
 
@@ -61,7 +73,9 @@ class OddOphidian {
   minMax(board, position, snakeId, depth, alpha, beta, maximizing) {
     if (depth === 0) {
       // return static evaluation
-      return this.evaluatePosition(board);
+      let score = this.evaluatePosition(board);
+
+      return score;
     } else if (position == null || this.board.grid.get(position).solid) {
       // move was suicidal
       return -Infinity;
@@ -72,13 +86,20 @@ class OddOphidian {
       Object.create(Object.getPrototypeOf(board)),
       board,
     );
-    newBoard.snakes.get(snakeId).pop();
+    newBoard.snakes.get(snakeId).body.unshift(position);
+    newBoard.grid.get(newBoard.snakes.get(snakeId).body[1]).solid = true;
+    newBoard.grid.get(
+      newBoard.snakes.get(snakeId).body[
+        newBoard.snakes.get(snakeId).body.length - 1
+      ],
+    ).solid = false;
+    newBoard.snakes.get(snakeId).body.pop();
 
     if (maximizing) {
       // me trying to make the best choice
       let maxEval = -Infinity;
       for (let move of this.possibleMoves) {
-        let eval = this.minMax(
+        let moveEval = this.minMax(
           board,
           board.grid.get(board.snakes.get('me').body[0])[move],
           'me',
@@ -87,8 +108,8 @@ class OddOphidian {
           beta,
           false,
         );
-        maxEval = Math.max(maxEval, eval);
-        alpha = Math.max(alpha, eval);
+        maxEval = Math.max(maxEval, moveEval);
+        alpha = Math.max(alpha, moveEval);
         if (beta <= alpha) {
           break;
         }
@@ -99,7 +120,7 @@ class OddOphidian {
       let minEval = Infinity;
       board.snakes.forEach((snake, snakeId) => {
         for (let move of this.possibleMoves) {
-          let eval = this.minMax(
+          let moveEval = this.minMax(
             board,
             board.grid.get(snake.body[0])[move],
             snakeId,
@@ -108,7 +129,7 @@ class OddOphidian {
             beta,
             true,
           );
-          minEval = Math.min(minEval, eval);
+          minEval = Math.min(minEval, moveEval);
         }
       });
       return minEval;
@@ -120,21 +141,22 @@ class OddOphidian {
     let maxEval = -Infinity;
 
     for (let move of this.possibleMoves) {
-      let eval = this.minMax(
+      let moveEval = this.minMax(
         this.board,
-        this.board.grid.get(this.head[move]),
+        this.head[move],
         'me',
         this.minMaxDepth,
         -Infinity,
         Infinity,
         false,
       );
-      if (eval > maxEval) {
-        maxEval = eval;
+      console.log(`${move}: ${moveEval}`);
+      if (moveEval > maxEval) {
+        maxEval = moveEval;
         bestMove = move;
       }
     }
-
+    console.log(bestMove);
     return bestMove;
   }
 }

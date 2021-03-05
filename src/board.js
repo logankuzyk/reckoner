@@ -6,7 +6,7 @@ class Board {
     this.grid = this.makeBoard(apiRequest);
     // [snake.id, Snake]
     this.snakes = new Map();
-    this.food = new Map();
+    this.food = [];
     this.loadGamePieces(apiRequest);
   }
   // Coordinate parameter is the same format as a single body element of a snake (for example).
@@ -29,7 +29,7 @@ class Board {
     let tile = this.grid.get(chess);
     for (let dir of ['left', 'right', 'up', 'down']) {
       if (tile[dir] !== null && this.grid.get(tile[dir]).food) {
-        return tile.coord;
+        return tile[dir].food;
       }
     }
     return null;
@@ -50,7 +50,7 @@ class Board {
       if (this.isNextToFood(this.coordToChess(snake.body[0]))) {
         // 🚨🚨 ASSUMPTION: a snake will eat food if it's directly next to it
         snake.body.unshift(this.isNextToFood(this.coordToChess(snake.body[0])));
-        deleteFood(this.coordToChess(snake.body[0]));
+        this.deleteFood(this.coordToChess(snake.body[0]));
       }
 
       if (snake.body.length < apiRequest.you.body.length) {
@@ -61,14 +61,14 @@ class Board {
         let body = snake.body[i];
         let tile = this.grid.get(this.coordToChess(body));
         tile.solid = true;
-        snakeObject.body.unshift(this.coordToChess(body));
+        snakeObject.body.push(this.coordToChess(body));
       }
       if (
         snake.body[0].x == apiRequest.you.body[0].x &&
         snake.body[0].y == apiRequest.you.body[0].y
       ) {
         this.snakes.set('me', snakeObject);
-        this.snakes.get('me').body[0].solid = false;
+        this.grid.get(this.snakes.get('me').body[0]).solid = false;
       } else {
         this.snakes.set(snake.id, snakeObject);
       }
@@ -99,35 +99,40 @@ class Board {
     let options = [];
     let minEval = Infinity;
 
+    // console.log(`coord 1 ${chess1}, coord 2 ${chess2}`)
+
     if (chess1 == chess2) {
+      // console.log("found destination")
       return 0;
     } else if (chess1 == null || chess2 == null || start.solid) {
+      // console.log("move don't work")
       return Infinity;
     }
 
-    if (end.x > start.x) {
+    if (end.coord.x > start.coord.x) {
       // need to go right
       options.push('right');
-    } else if (end.x < start.x) {
+    } else if (end.coord.x < start.coord.x) {
       // need to go left
       options.push('left');
     }
 
-    if (end.y > start.y) {
+    if (end.coord.y > start.coord.y) {
       // need to go up
       options.push('up');
-    } else if (end.y < start.y) {
+    } else if (end.coord.y < start.coord.y) {
       // need to go down
       options.push('down');
     }
-
+    // console.log(options)
     for (let move of options) {
+      // console.log(`trying ${move}`)
       let length = this.lengthOfPath(start[move], chess2);
       if (length < minEval) {
         minEval = length;
       }
     }
-
+    // console.log(`returning ${minEval + 1}`)
     return minEval + 1;
   }
 }
