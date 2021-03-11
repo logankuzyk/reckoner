@@ -1,5 +1,6 @@
 const Snake = require('./snake');
 const Tile = require('./tile');
+const aStar = require("./aStar")
 
 class Board {
   constructor(apiRequest) {
@@ -47,6 +48,8 @@ class Board {
 
       if (this.isNextToFood(this.coordToChess(snake.body[0]))) {
         // 🚨🚨 ASSUMPTION: a snake will eat food if it's directly next to it
+        // TODO: make it so bigger snake takes it if two are next to eachother.
+        // TODO: make it so snake grows on the turn after eating.
         snake.body.unshift(this.isNextToFood(this.coordToChess(snake.body[0])));
         this.deleteFood(this.coordToChess(snake.body[0]));
       }
@@ -58,7 +61,7 @@ class Board {
       for (i; i < snake.body.length; i++) {
         let body = snake.body[i];
         let tile = this.grid.get(this.coordToChess(body));
-        tile.solid = true;
+        tile.weight = 0;
         snakeObject.body.push(this.coordToChess(body));
       }
       if (
@@ -66,7 +69,7 @@ class Board {
         snake.body[0].y == apiRequest.you.body[0].y
       ) {
         this.snakes.set('me', snakeObject);
-        this.grid.get(this.snakes.get('me').body[0]).solid = false;
+        this.grid.get(this.snakes.get('me').body[0]).weight = 1;
       } else {
         this.snakes.set(snake.id, snakeObject);
       }
@@ -91,7 +94,11 @@ class Board {
     return board;
   }
 
-  
+  lengthOfPath(tile1, tile2, grid) {
+    let path = aStar.search(tile1, tile2, grid);
+    console.log(path)
+    return path.length;
+  }
 }
 
 module.exports = Board;

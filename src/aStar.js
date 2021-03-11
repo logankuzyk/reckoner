@@ -5,7 +5,7 @@
 
 BinaryHeap = require('./binaryHeap');
 
-getNewHeap = (node) => {
+getNewHeap = () => {
   return new BinaryHeap((node) => {
     return node.f;
   });
@@ -23,10 +23,10 @@ pathTo = (node) => {
   return path;
 };
 
-aStar = {
-  search: (start, end, options = {}) => {
+const aStar = {
+  search: (start, end, grid, options = {}) => {
     //graph.cleanDirty();
-    let heuristic = options.heuristic || aStar.heuristics.manhattan;
+    let heuristic = options.heuristic || aStar.heuristic;
     let closest = options.closest || false;
 
     let openHeap = getNewHeap();
@@ -45,10 +45,17 @@ aStar = {
 
       currentNode.closed = true;
 
-      let neighbors = graph.neighbors(currentNode);
+      let neighbors = [];
 
+      for (let dir of ["left", "right", "up", "down"]) {
+        if (currentNode[dir]) {
+          neighbors.push(currentNode[dir])
+        }
+      }
+
+      console.log(neighbors)
       for (let i = 0, iL = neighbors.length; i < iL; i++) {
-        let neighbor = neighbors[i];
+        let neighbor = grid.get(neighbors[i]);
 
         if (neighbor.closed || neighbor.isWall()) {
           continue;
@@ -89,7 +96,7 @@ aStar = {
 
     return [];
   },
-  heuristics: (coord1, coord2) => {
+  heuristic: (coord1, coord2) => {
     let deltax = Math.abs(coord2.x - coord1.x);
     let deltay = Math.abs(coord2.y - coord1.y);
 

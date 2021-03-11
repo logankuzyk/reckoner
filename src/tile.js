@@ -4,8 +4,9 @@ class Tile {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
     this.chess = `${alphabet.charAt(x - 1)}${String(y)}`;
-    this.coord = { x: x - 1, y: y - 1 };
-    this.solid;
+    this.x = x - 1
+    this.y = y - 1 ;
+    this.weight;
     this.food;
     this.right;
     this.left;
@@ -35,6 +36,17 @@ class Tile {
     } else {
       this.up = `${alphabet.charAt(x - 1)}${String(y + 1)}`;
     }
+  }
+
+  isWall() {
+    return this.weight === 0;
+  }
+
+  getCost() {
+    // if (fromNeighbor && fromNeighbor.x != this.x && fromNeighbor.y != this.y) {
+    //   return this.weight * 1.41421;
+    // }
+    return this.weight;
   }
 }
 

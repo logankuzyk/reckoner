@@ -13,7 +13,7 @@ class OddOphidian {
     let me = board.snakes.get('me');
 
     let iterator = board.snakes.values();
-    let targetSnake;
+    let targetSnakeHead;
     let scarySnakeTail;
     let score;
 
@@ -24,7 +24,7 @@ class OddOphidian {
       }
 
       if (snake.value.body.length + 1 < me.body.length) {
-        targetSnake = snake.value.body[0];
+        targetSnakeHead = snake.value.body[0];
         break;
       } else {
         scarySnakeTail = snake.value.body[snake.value.body.length - 1];
@@ -32,21 +32,22 @@ class OddOphidian {
     }
 
     // only looks at first food right now. can change to closest food in the future (change food storage technique)
-    let turnsUntilFood = board.lengthOfPath(me.body[0], board.food[0]);
+    let turnsUntilFood = board.lengthOfPath(board.grid.get(me.body[0]), board.grid.get(board.food[0]), board.grid);
     let turnsUntilTail = board.lengthOfPath(
-      me.body[0],
-      me.body[me.body.length - 1],
+      board.grid.get(me.body[0]),
+      board.grid.get(me.body[me.body.length - 1]),
+      board.grid
     );
     let turnsUntilKill;
     let turnsUntilOtherTail;
 
-    if (targetSnake) {
-      turnsUntilKill = board.lengthOfPath(me.body[0], targetSnake);
+    if (targetSnakeHead) {
+      turnsUntilKill = board.lengthOfPath(board.grid.get(me.body[0]), board.grid.get(targetSnakeHead), board.grid);
     } else {
       turnsUntilKill = 0;
     }
     if (scarySnakeTail) {
-      turnsUntilOtherTail = board.lengthOfPath(me.body[0], scarySnakeTail);
+      turnsUntilOtherTail = board.lengthOfPath(board.grid.get(me.body[0]), board.grid.get(scarySnakeTail), board.grid);
     } else {
       turnsUntilOtherTail = 0;
     }
@@ -76,7 +77,7 @@ class OddOphidian {
       let score = this.evaluatePosition(board);
 
       return score;
-    } else if (position == null || this.board.grid.get(position).solid) {
+    } else if (position == null || this.board.grid.get(position).isWall()) {
       // move was suicidal
       return -Infinity;
     }
@@ -87,12 +88,12 @@ class OddOphidian {
       board,
     );
     newBoard.snakes.get(snakeId).body.unshift(position);
-    newBoard.grid.get(newBoard.snakes.get(snakeId).body[1]).solid = true;
+    newBoard.grid.get(newBoard.snakes.get(snakeId).body[1]).weight = 0;
     newBoard.grid.get(
       newBoard.snakes.get(snakeId).body[
         newBoard.snakes.get(snakeId).body.length - 1
       ],
-    ).solid = false;
+    ).weight = 1;
     newBoard.snakes.get(snakeId).body.pop();
 
     if (maximizing) {
