@@ -35,8 +35,6 @@ class Board {
     return null;
   }
 
-  displayBoard() {}
-
   loadGamePieces(apiRequest) {
     apiRequest.board.food.forEach((food) => {
       let tile = this.grid.get(this.coordToChess(food));
@@ -93,48 +91,7 @@ class Board {
     return board;
   }
 
-  lengthOfPath(chess1, chess2) {
-    let start = this.grid.get(chess1);
-    let end = this.grid.get(chess2);
-    let options = [];
-    let minEval = Infinity;
-
-    // console.log(`coord 1 ${chess1}, coord 2 ${chess2}`)
-
-    if (chess1 == chess2) {
-      // console.log("found destination")
-      return 0;
-    } else if (chess1 == null || chess2 == null || start.solid) {
-      // console.log("move don't work")
-      return Infinity;
-    }
-
-    if (end.coord.x > start.coord.x) {
-      // need to go right
-      options.push('right');
-    } else if (end.coord.x < start.coord.x) {
-      // need to go left
-      options.push('left');
-    }
-
-    if (end.coord.y > start.coord.y) {
-      // need to go up
-      options.push('up');
-    } else if (end.coord.y < start.coord.y) {
-      // need to go down
-      options.push('down');
-    }
-    // console.log(options)
-    for (let move of options) {
-      // console.log(`trying ${move}`)
-      let length = this.lengthOfPath(start[move], chess2);
-      if (length < minEval) {
-        minEval = length;
-      }
-    }
-    // console.log(`returning ${minEval + 1}`)
-    return minEval + 1;
-  }
+  
 }
 
 module.exports = Board;
