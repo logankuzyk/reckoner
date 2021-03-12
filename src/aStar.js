@@ -47,13 +47,12 @@ const aStar = {
 
       let neighbors = [];
 
-      for (let dir of ["left", "right", "up", "down"]) {
+      for (let dir of ['left', 'right', 'up', 'down']) {
         if (currentNode[dir]) {
-          neighbors.push(currentNode[dir])
+          neighbors.push(currentNode[dir]);
         }
       }
 
-      console.log(neighbors)
       for (let i = 0, iL = neighbors.length; i < iL; i++) {
         let neighbor = grid.get(neighbors[i]);
 

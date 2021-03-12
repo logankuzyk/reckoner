@@ -1,6 +1,6 @@
 const Snake = require('./snake');
 const Tile = require('./tile');
-const aStar = require("./aStar")
+const aStar = require('./aStar');
 
 class Board {
   constructor(apiRequest) {
@@ -30,7 +30,7 @@ class Board {
     let minDistance = Infinity;
     let start = this.grid.get(chess);
     let foodChess = this.food[0];
-    
+
     this.food.forEach((food, index) => {
       let foodTile = this.grid.get(food);
       let estimatedDistance = aStar.heuristic(start, foodTile);
@@ -39,7 +39,7 @@ class Board {
         minDistance = estimatedDistance;
         foodChess = foodTile.chess;
       }
-    })
+    });
 
     return foodChess;
   }
@@ -64,7 +64,13 @@ class Board {
       let snakeObject = new Snake(snake);
       let i = 0;
 
-      if (this.isNextToFood(this.coordToChess(snake.body[0]))) {
+      if (
+        this.isNextToFood(this.coordToChess(snake.body[0])) &&
+        !(
+          snake.body[0].x == apiRequest.you.body[0].x &&
+          snake.body[0].y == apiRequest.you.body[0].y
+        )
+      ) {
         // 🚨🚨 ASSUMPTION: a snake will eat food if it's directly next to it
         // TODO: make it so bigger snake takes it if two are next to eachother.
         // TODO: make it so snake grows on the turn after eating.
@@ -86,6 +92,7 @@ class Board {
         snake.body[0].x == apiRequest.you.body[0].x &&
         snake.body[0].y == apiRequest.you.body[0].y
       ) {
+        // console.log(snakeObject)
         this.snakes.set('me', snakeObject);
         this.grid.get(this.snakes.get('me').body[0]).weight = 1;
       } else {
@@ -114,8 +121,13 @@ class Board {
 
   lengthOfPath(tile1, tile2, grid) {
     let path = aStar.search(tile1, tile2, grid);
-    // console.log(path)
-    return path.length;
+    // console.log(`Path from ${tile1.chess} to ${tile2.chess}`);
+    // console.log(path);
+    if (path.length === 0) {
+      return Infinity;
+    } else {
+      return path.length;
+    }
   }
 }
 

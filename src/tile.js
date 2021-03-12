@@ -4,8 +4,8 @@ class Tile {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
     this.chess = `${alphabet.charAt(x - 1)}${String(y)}`;
-    this.x = x - 1
-    this.y = y - 1 ;
+    this.x = x - 1;
+    this.y = y - 1;
     this.weight;
     this.food;
     this.right;
