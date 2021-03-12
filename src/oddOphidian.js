@@ -65,7 +65,6 @@ class OddOphidian {
     } else {
       turnsUntilOtherTail = 0;
     }
-    console.log(me.body);
     console.log(`turn until food ${turnsUntilFood}`);
     console.log(`turns until tail ${turnsUntilTail}`);
     // console.log(`turns until kill ${turnsUntilKill}`)
@@ -97,12 +96,12 @@ class OddOphidian {
 
     newBoard.snakes.get(snakeId).body.unshift(position);
     newBoard.grid.get(newBoard.snakes.get(snakeId).body[1]).weight = 0;
+    newBoard.snakes.get(snakeId).body.pop();
     newBoard.grid.get(
       newBoard.snakes.get(snakeId).body[
         newBoard.snakes.get(snakeId).body.length - 1
       ],
     ).weight = 1;
-    newBoard.snakes.get(snakeId).body.pop();
 
     if (maximizing) {
       // me trying to make the best choice
@@ -148,8 +147,7 @@ class OddOphidian {
   weighTheConsequences() {
     let bestMove;
     let maxEval = -Infinity;
-    console.log('BEFORE');
-    console.log(this.board.snakes.get('me').body);
+
     for (let move of this.possibleMoves) {
       let moveEval = this.minMax(
         this.board,
@@ -167,10 +165,7 @@ class OddOphidian {
       }
     }
 
-    console.log('AFTER');
-    console.log(this.board.snakes.get('me').body);
-
-    console.log(bestMove);
+    console.log(`Going ${bestMove}`);
     return bestMove;
   }
 }
