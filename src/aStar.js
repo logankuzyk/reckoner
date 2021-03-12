@@ -4,26 +4,7 @@
 // http://eloquentjavascript.net/appendix2.html
 
 const Tile = require('./tile');
-
-BinaryHeap = require('./binaryHeap');
-
-cleanDirty = (grid) => {
-  let iterator = grid.values();
-
-  while (true) {
-    let tile = iterator.next();
-    if (tile.done) {
-      break;
-    }
-
-    tile.value.h = 0;
-    tile.value.g = 0;
-    tile.value.g = 0;
-    tile.value.closed = false;
-    tile.value.visited = false;
-    tile.value.parent = undefined;
-  }
-}
+const BinaryHeap = require('./binaryHeap');
 
 getNewHeap = () => {
   return new BinaryHeap((node) => {
@@ -44,8 +25,9 @@ pathTo = (node) => {
 };
 
 const aStar = {
-  search: (start, end, grid, options = {}) => {
-    cleanDirty(grid);
+  search: (start, end, board, options = {}) => {
+    let grid = board.grid;
+    board.cleanDirty();
     let heuristic = options.heuristic || aStar.heuristic;
     let closest = options.closest || false;
 
@@ -89,7 +71,7 @@ const aStar = {
           neighbor.h = neighbor.h || heuristic(neighbor, end);
           neighbor.g = gScore;
           neighbor.f = neighbor.g + neighbor.h;
-          //graph.markDirty(neighbor);
+          board.markDirty(neighbor.chess);
 
           if (closest) {
             if (

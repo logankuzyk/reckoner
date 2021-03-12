@@ -8,6 +8,7 @@ class Board {
     // [snake.id, Snake]
     this.snakes = new Map();
     this.food = [];
+    this.dirtyTiles = [];
     this.loadGamePieces(apiRequest);
   }
   // Coordinate parameter is the same format as a single body element of a snake (for example).
@@ -122,8 +123,8 @@ class Board {
     return board;
   }
 
-  lengthOfPath(tile1, tile2, grid) {
-    let path = aStar.search(tile1, tile2, grid);
+  lengthOfPath(tile1, tile2, board) {
+    let path = aStar.search(tile1, tile2, board);
     // console.log(`Path from ${tile1.chess} to ${tile2.chess}`);
     // console.log(path);
     if (path.length === 0) {
@@ -131,6 +132,22 @@ class Board {
     } else {
       return path.length;
     }
+  }
+
+  markDirty(chess) {
+    this.dirtyTiles.push(chess);
+  }
+
+  cleanDirty() {
+    this.dirtyTiles.forEach((chess) => {
+      let tile = this.grid.get(chess);
+      tile.h = 0;
+      tile.g = 0;
+      tile.g = 0;
+      tile.closed = false;
+      tile.visited = false;
+      tile.parent = undefined;
+    });
   }
 }
 
