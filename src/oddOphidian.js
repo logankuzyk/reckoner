@@ -1,5 +1,5 @@
 const Board = require('./board');
-const clone = require("lodash.clonedeep")
+const clone = require('lodash.clonedeep');
 
 class OddOphidian {
   constructor(apiRequest) {
@@ -64,7 +64,7 @@ class OddOphidian {
     } else {
       turnsUntilOtherTail = 0;
     }
-    console.log(me.body)
+    console.log(me.body);
     console.log(`turn until food ${turnsUntilFood}`);
     console.log(`turns until tail ${turnsUntilTail}`);
     // console.log(`turns until kill ${turnsUntilKill}`)
@@ -91,8 +91,8 @@ class OddOphidian {
       // move was suicidal
       return -Infinity;
     }
-  
-    let newBoard = clone(board)
+
+    let newBoard = clone(board);
 
     newBoard.snakes.get(snakeId).body.unshift(position);
     newBoard.grid.get(newBoard.snakes.get(snakeId).body[1]).weight = 0;
@@ -147,8 +147,8 @@ class OddOphidian {
   weighTheConsequences() {
     let bestMove;
     let maxEval = -Infinity;
-    console.log("BEFORE")
-    console.log(this.board.snakes.get("me").body)
+    console.log('BEFORE');
+    console.log(this.board.snakes.get('me').body);
     for (let move of this.possibleMoves) {
       let moveEval = this.minMax(
         this.board,
@@ -166,8 +166,8 @@ class OddOphidian {
       }
     }
 
-    console.log("AFTER")
-    console.log(this.board.snakes.get("me").body)
+    console.log('AFTER');
+    console.log(this.board.snakes.get('me').body);
 
     console.log(bestMove);
     return bestMove;
