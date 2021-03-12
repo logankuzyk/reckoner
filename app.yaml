@@ -1,4 +1,4 @@
-service: default
+service: odd-ophidian
 runtime: nodejs12
 instance_class: F1
 
