@@ -32,7 +32,7 @@ class OddOphidian {
     }
 
     // only looks at first food right now. can change to closest food in the future (change food storage technique)
-    let turnsUntilFood = board.lengthOfPath(board.grid.get(me.body[0]), board.grid.get(board.food[0]), board.grid);
+    let turnsUntilFood = board.lengthOfPath(board.grid.get(board.closestFood(me.body[0])), board.grid.get(board.food[0]), board.grid);
     let turnsUntilTail = board.lengthOfPath(
       board.grid.get(me.body[0]),
       board.grid.get(me.body[me.body.length - 1]),
@@ -51,11 +51,11 @@ class OddOphidian {
     } else {
       turnsUntilOtherTail = 0;
     }
-    // console.log(`turn until food ${turnsUntilFood}`)
-    // console.log(`turns until tail ${turnsUntilTail}`)
+    console.log(`turn until food ${turnsUntilFood}`)
+    console.log(`turns until tail ${turnsUntilTail}`)
     // console.log(`turns until kill ${turnsUntilKill}`)
     // console.log(`turns until other tail ${turnsUntilOtherTail}`)
-    score = -(
+    score = (
       turnsUntilFood +
       turnsUntilTail +
       turnsUntilKill +
