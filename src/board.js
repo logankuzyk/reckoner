@@ -26,6 +26,24 @@ class Board {
     this.grid.get(chess).food = false;
   }
 
+  closestFood(chess) {
+    let minDistance = Infinity;
+    let start = this.grid.get(chess);
+    let foodChess = this.food[0];
+    
+    this.food.forEach((food, index) => {
+      let foodTile = this.grid.get(food);
+      let estimatedDistance = aStar.heuristic(start, foodTile);
+
+      if (estimatedDistance < minDistance) {
+        minDistance = estimatedDistance;
+        foodChess = foodTile.chess;
+      }
+    })
+
+    return foodChess;
+  }
+
   isNextToFood(chess) {
     let tile = this.grid.get(chess);
     for (let dir of ['left', 'right', 'up', 'down']) {
@@ -96,7 +114,7 @@ class Board {
 
   lengthOfPath(tile1, tile2, grid) {
     let path = aStar.search(tile1, tile2, grid);
-    console.log(path)
+    // console.log(path)
     return path.length;
   }
 }
