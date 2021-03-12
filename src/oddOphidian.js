@@ -32,16 +32,17 @@ class OddOphidian {
       }
     }
 
+    // TODO: use food generation probability.
     // TODO: improve closest food technique.
     let turnsUntilFood = board.lengthOfPath(
       board.grid.get(me.body[0]),
       board.grid.get(board.closestFood(me.body[0])),
-      board.grid,
+      board,
     );
     let turnsUntilTail = board.lengthOfPath(
       board.grid.get(me.body[0]),
       board.grid.get(me.body[me.body.length - 1]),
-      board.grid,
+      board,
     );
     let turnsUntilKill;
     let turnsUntilOtherTail;
@@ -50,7 +51,7 @@ class OddOphidian {
       turnsUntilKill = board.lengthOfPath(
         board.grid.get(me.body[0]),
         board.grid.get(targetSnakeHead),
-        board.grid,
+        board,
       );
     } else {
       turnsUntilKill = 0;
@@ -59,7 +60,7 @@ class OddOphidian {
       turnsUntilOtherTail = board.lengthOfPath(
         board.grid.get(me.body[0]),
         board.grid.get(scarySnakeTail),
-        board.grid,
+        board,
       );
     } else {
       turnsUntilOtherTail = 0;
