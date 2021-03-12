@@ -6,12 +6,18 @@ class Tile {
     this.chess = `${alphabet.charAt(x - 1)}${String(y)}`;
     this.x = x - 1;
     this.y = y - 1;
-    this.weight;
     this.food;
     this.right;
     this.left;
     this.up;
     this.down;
+
+    this.weight = 1;
+    this.h = 0;
+    this.g = 0;
+    this.g = 0;
+    this.closed = false;
+    this.visited = false;
 
     if (x == 1) {
       this.left = null;

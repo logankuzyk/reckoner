@@ -3,7 +3,27 @@
 // Implements the A* search algorithm using a binary heap.
 // http://eloquentjavascript.net/appendix2.html
 
+const Tile = require('./tile');
+
 BinaryHeap = require('./binaryHeap');
+
+cleanDirty = (grid) => {
+  let iterator = grid.values();
+
+  while (true) {
+    let tile = iterator.next();
+    if (tile.done) {
+      break;
+    }
+
+    tile.value.h = 0;
+    tile.value.g = 0;
+    tile.value.g = 0;
+    tile.value.closed = false;
+    tile.value.visited = false;
+    tile.value.parent = undefined;
+  }
+}
 
 getNewHeap = () => {
   return new BinaryHeap((node) => {
@@ -25,7 +45,7 @@ pathTo = (node) => {
 
 const aStar = {
   search: (start, end, grid, options = {}) => {
-    //graph.cleanDirty();
+    cleanDirty(grid);
     let heuristic = options.heuristic || aStar.heuristic;
     let closest = options.closest || false;
 
@@ -39,7 +59,7 @@ const aStar = {
     while (openHeap.size() > 0) {
       let currentNode = openHeap.pop();
 
-      if (currentNode == end) {
+      if (currentNode.chess == end.chess) {
         return pathTo(currentNode);
       }
 
@@ -93,6 +113,7 @@ const aStar = {
       return pathTo(closestNode);
     }
 
+    console.log(`Couldn't find path from ${start.chess} to ${end.chess}`);
     return [];
   },
   heuristic: (coord1, coord2) => {

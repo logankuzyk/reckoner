@@ -62,31 +62,34 @@ class Board {
     });
     apiRequest.board.snakes.forEach((snake) => {
       let snakeObject = new Snake(snake);
-      let i = 0;
 
-      if (
-        this.isNextToFood(this.coordToChess(snake.body[0])) &&
-        !(
-          snake.body[0].x == apiRequest.you.body[0].x &&
-          snake.body[0].y == apiRequest.you.body[0].y
-        )
-      ) {
-        // 🚨🚨 ASSUMPTION: a snake will eat food if it's directly next to it
-        // TODO: make it so bigger snake takes it if two are next to eachother.
-        // TODO: make it so snake grows on the turn after eating.
-        snake.body.unshift(this.isNextToFood(this.coordToChess(snake.body[0])));
-        this.deleteFood(this.coordToChess(snake.body[0]));
-      }
+      // if (
+      //   this.isNextToFood(this.coordToChess(snake.body[0])) &&
+      //   !(
+      //     snake.body[0].x == apiRequest.you.body[0].x &&
+      //     snake.body[0].y == apiRequest.you.body[0].y
+      //   )
+      // ) {
+      //   // 🚨🚨 ASSUMPTION: a snake will eat food if it's directly next to it
+      //   // TODO: make it so bigger snake takes it if two are next to eachother.
+      //   // TODO: make it so snake grows on the turn after eating.
+      //   snake.body.unshift(this.isNextToFood(this.coordToChess(snake.body[0])));
+      //   this.deleteFood(this.coordToChess(snake.body[0]));
+      // }
 
-      if (snake.body.length < apiRequest.you.body.length) {
-        // Snake is prey, head is not "solid"
-        i++;
-      }
-      for (i; i < snake.body.length; i++) {
+      for (let i = 0; i < snake.body.length; i++) {
         let body = snake.body[i];
         let tile = this.grid.get(this.coordToChess(body));
-        tile.weight = 0;
+        if (i === snake.body.length - 1) {
+          tile.weight = 1;
+        } else {
+          tile.weight = 0;
+        }
         snakeObject.body.push(this.coordToChess(body));
+      }
+      if (snake.body.length < apiRequest.you.body.length) {
+        // Snake is prey, head is not "solid"
+        snake.body[0].weight = 1;
       }
       if (
         snake.body[0].x == apiRequest.you.body[0].x &&
