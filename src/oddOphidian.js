@@ -65,6 +65,15 @@ class OddOphidian {
     } else {
       turnsUntilOtherTail = 0;
     }
+    if (isFinite(turnsUntilTail)) {
+      if (isFinite(turnsUntilFood)) {
+        return -turnsUntilFood
+      } else {
+        return -turnsUntilTail
+      }
+    } else {
+      return -Infinity
+    }
     console.log(`turn until food ${turnsUntilFood}`);
     console.log(`turns until tail ${turnsUntilTail}`);
     // console.log(`turns until kill ${turnsUntilKill}`)
@@ -156,7 +165,7 @@ class OddOphidian {
         this.minMaxDepth,
         -Infinity,
         Infinity,
-        false,
+        true,
       );
       console.log(`${move}: ${moveEval}`);
       if (moveEval > maxEval) {
