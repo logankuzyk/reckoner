@@ -22,7 +22,7 @@ class Board {
   deleteFood(chess) {
     let index = this.food.indexOf(chess);
     if (index > -1) {
-      array.splice(index, 1);
+      this.food.splice(index, 1);
     }
     this.grid.get(chess).food = false;
   }
@@ -64,11 +64,6 @@ class Board {
     apiRequest.board.snakes.forEach((snake) => {
       let snakeObject = new Snake(snake);
 
-      if (this.grid.get(snake.body[0]).food) {
-        snake.body.push(snake.body[snake.body.length - 1]);
-        this.deleteFood(this.coordToChess(snake.body[0]));
-      }
-
       for (let i = 0; i < snake.body.length; i++) {
         let body = snake.body[i];
         let tile = this.grid.get(this.coordToChess(body));
@@ -79,10 +74,18 @@ class Board {
         }
         snakeObject.body.push(this.coordToChess(body));
       }
-      if (snake.body.length < apiRequest.you.body.length) {
-        // Snake is prey, head is not "solid"
-        snake.body[0].weight = 1;
-      }
+
+      // if (this.grid.get(snakeObject.body[0]).food) {
+      //   this.grid.get(snakeObject.body[snakeObject.body - 1]).weight = 0;
+      //   snakeObject.body.push(snakeObject.body[snakeObject.body.length - 1]);
+      //   this.deleteFood(this.coordToChess(snake.body[0]));
+      // }
+
+      // if (snake.body.length < apiRequest.you.body.length) {
+      //   // Snake is prey, head is not "solid"
+      //   snake.body[0].weight = 1;
+      // }
+
       if (
         snake.body[0].x == apiRequest.you.body[0].x &&
         snake.body[0].y == apiRequest.you.body[0].y
