@@ -64,19 +64,10 @@ class Board {
     apiRequest.board.snakes.forEach((snake) => {
       let snakeObject = new Snake(snake);
 
-      // if (
-      //   this.isNextToFood(this.coordToChess(snake.body[0])) &&
-      //   !(
-      //     snake.body[0].x == apiRequest.you.body[0].x &&
-      //     snake.body[0].y == apiRequest.you.body[0].y
-      //   )
-      // ) {
-      //   // 🚨🚨 ASSUMPTION: a snake will eat food if it's directly next to it
-      //   // TODO: make it so bigger snake takes it if two are next to eachother.
-      //   // TODO: make it so snake grows on the turn after eating.
-      //   snake.body.unshift(this.isNextToFood(this.coordToChess(snake.body[0])));
-      //   this.deleteFood(this.coordToChess(snake.body[0]));
-      // }
+      if (this.grid.get(snake.body[0]).food) {
+        snake.body.push(snake.body[snake.body.length - 1]);
+        this.deleteFood(this.coordToChess(snake.body[0]));
+      }
 
       for (let i = 0; i < snake.body.length; i++) {
         let body = snake.body[i];

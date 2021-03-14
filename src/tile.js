@@ -6,7 +6,7 @@ class Tile {
     this.chess = `${alphabet.charAt(x - 1)}${String(y)}`;
     this.x = x - 1;
     this.y = y - 1;
-    this.food;
+    this.food = false;
     this.right;
     this.left;
     this.up;
