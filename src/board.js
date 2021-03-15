@@ -75,11 +75,7 @@ class Board {
         snakeObject.body.push(this.coordToChess(body));
       }
 
-      // if (this.grid.get(snakeObject.body[0]).food) {
-      //   this.grid.get(snakeObject.body[snakeObject.body - 1]).weight = 0;
-      //   snakeObject.body.push(snakeObject.body[snakeObject.body.length - 1]);
-      //   this.deleteFood(this.coordToChess(snake.body[0]));
-      // }
+      // Food isn't dealt with here. It's in the minMax function because the snake gets moved after creating the new board for a simulation.
 
       // if (snake.body.length < apiRequest.you.body.length) {
       //   // Snake is prey, head is not "solid"
