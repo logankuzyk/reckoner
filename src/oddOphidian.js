@@ -12,11 +12,17 @@ class OddOphidian {
 
   evaluatePosition(board) {
     let me = board.snakes.get('me');
-
+  
+    // Output score. Higher is better.
+    let score = 0;
     let iterator = board.snakes.values();
     let targetSnakeHead;
     let scarySnakeTail;
-    let score;
+
+    let turnsUntilTail;
+    let turnsUntilFood;
+    let turnsUntilKill;
+    let turnsUntilOtherFood;
 
     while (true) {
       let snake = iterator.next();
@@ -34,56 +40,77 @@ class OddOphidian {
 
     // TODO: use food generation probability.
     // TODO: improve closest food technique.
-    let turnsUntilFood = board.lengthOfPath(
+    turnsUntilFood = board.lengthOfPath(
       board.grid.get(me.body[0]),
       board.grid.get(board.closestFood(me.body[0])),
       board,
     );
-    let turnsUntilTail = board.lengthOfPath(
-      board.grid.get(me.body[0]),
-      board.grid.get(me.body[me.body.length - 1]),
-      board,
-    );
-    let turnsUntilKill;
-    let turnsUntilOtherTail;
 
-    if (targetSnakeHead) {
-      turnsUntilKill = board.lengthOfPath(
-        board.grid.get(me.body[0]),
-        board.grid.get(targetSnakeHead),
-        board,
-      );
-    } else {
-      turnsUntilKill = 0;
-    }
-    if (scarySnakeTail) {
-      turnsUntilOtherTail = board.lengthOfPath(
-        board.grid.get(me.body[0]),
-        board.grid.get(scarySnakeTail),
-        board,
-      );
-    } else {
-      turnsUntilOtherTail = 0;
-    }
-
-    if (isFinite(turnsUntilTail)) {
-      if (isFinite(turnsUntilFood)) {
-        // console.log("returning turns until food")
-        return -turnsUntilFood;
-      } else {
-        // console.log("returning turns until tail")
-        return -turnsUntilTail;
+    let tailTile = board.grid.get(me.body[me.body.length - 1]);
+    let targetTile;
+    if (board.grid.get(me.body[me.body.length - 1]).weight === 0) {
+      console.log("SOLID TAIL")
+      for (let dir of this.possibleMoves) {
+        if (board.grid.get(me.body[me.body.length - 3])[dir] == tailTile.chess) {
+          targetTile = board.grid.get(tailTile[dir])
+        }
       }
     } else {
-      return -Infinity;
+      targetTile = board.grid.get(me.body[me.body.length - 1])
     }
+
+    turnsUntilTail = board.lengthOfPath(
+      board.grid.get(me.body[0]),
+      targetTile,
+      board,
+    );
+
+    // if (targetSnakeHead) {
+    //   turnsUntilKill = board.lengthOfPath(
+    //     board.grid.get(me.body[0]),
+    //     board.grid.get(targetSnakeHead),
+    //     board,
+    //   );
+    // } else {
+    //   turnsUntilKill = 0;
+    // }
+
+    // if (scarySnakeTail) {
+    //   turnsUntilOtherTail = board.lengthOfPath(
+    //     board.grid.get(me.body[0]),
+    //     board.grid.get(scarySnakeTail),
+    //     board,
+    //   );
+    // } else {
+    //   turnsUntilOtherTail = 0;
+    // }
+    
+    if (isFinite(turnsUntilTail)) {
+      score += 8
+    }
+
+    if (board.grid.get(me.body[0]).food) {
+      score += 4;
+    } else if (isFinite(turnsUntilFood)) {
+      score += (4 * (1 / (turnsUntilFood + 1)))
+    }
+
+    // if (isFinite(turnsUntilTail)) {
+    //   if (isFinite(turnsUntilFood)) {
+    //     // console.log("returning turns until food")
+    //     return -turnsUntilFood;
+    //   } else {
+    //     // console.log("returning turns until tail")
+    //     return -turnsUntilTail;
+    //   }
+    // } else {
+    //   return -Infinity;
+    // }
     console.log(`turn until food ${turnsUntilFood}`);
     console.log(`turns until tail ${turnsUntilTail}`);
     // console.log(`turns until kill ${turnsUntilKill}`)
     // console.log(`turns until other tail ${turnsUntilOtherTail}`)
-    score =
-      turnsUntilFood + turnsUntilTail + turnsUntilKill + turnsUntilOtherTail;
-    // console.log(score)
+
     return score;
   }
 
@@ -108,13 +135,17 @@ class OddOphidian {
     // console.log(board.snakes.get("me").body)
     // Move new board forward.
     let snake = newBoard.snakes.get(snakeId);
+
+    if (newBoard.grid.get(snake.body[0]).food) {
+      newBoard.deleteFood(snake.body[0])
+    }
+
     snake.body.unshift(position);
     snake.body.pop();
 
     if (newBoard.grid.get(position).food) {
       newBoard.grid.get(snake.body[snake.body.length - 1]).weight = 0;
       snake.body.push(snake.body[snake.body.length - 1]);
-      newBoard.deleteFood(position);
     } else {
       newBoard.grid.get(snake.body[1]).weight = 0;
       newBoard.grid.get(snake.body[snake.body.length - 1]).weight = 1;
