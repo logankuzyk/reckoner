@@ -12,7 +12,7 @@ class OddOphidian {
 
   evaluatePosition(board) {
     let me = board.snakes.get('me');
-  
+
     // Output score. Higher is better.
     let score = 0;
     let iterator = board.snakes.values();
@@ -49,14 +49,16 @@ class OddOphidian {
     let tailTile = board.grid.get(me.body[me.body.length - 1]);
     let targetTile;
     if (board.grid.get(me.body[me.body.length - 1]).weight === 0) {
-      console.log("SOLID TAIL")
+      console.log('SOLID TAIL');
       for (let dir of this.possibleMoves) {
-        if (board.grid.get(me.body[me.body.length - 3])[dir] == tailTile.chess) {
-          targetTile = board.grid.get(tailTile[dir])
+        if (
+          board.grid.get(me.body[me.body.length - 3])[dir] == tailTile.chess
+        ) {
+          targetTile = board.grid.get(tailTile[dir]);
         }
       }
     } else {
-      targetTile = board.grid.get(me.body[me.body.length - 1])
+      targetTile = board.grid.get(me.body[me.body.length - 1]);
     }
 
     turnsUntilTail = board.lengthOfPath(
@@ -84,15 +86,15 @@ class OddOphidian {
     // } else {
     //   turnsUntilOtherTail = 0;
     // }
-    
+
     if (isFinite(turnsUntilTail)) {
-      score += 8
+      score += 8;
     }
 
     if (board.grid.get(me.body[0]).food) {
       score += 4;
     } else if (isFinite(turnsUntilFood)) {
-      score += (4 * (1 / (turnsUntilFood + 1)))
+      score += 4 * (1 / (turnsUntilFood + 1));
     }
 
     // if (isFinite(turnsUntilTail)) {
@@ -137,13 +139,14 @@ class OddOphidian {
     let snake = newBoard.snakes.get(snakeId);
 
     if (newBoard.grid.get(snake.body[0]).food) {
-      newBoard.deleteFood(snake.body[0])
+      newBoard.deleteFood(snake.body[0]);
     }
 
     snake.body.unshift(position);
     snake.body.pop();
 
     if (newBoard.grid.get(position).food) {
+      newBoard.grid.get(snake.body[1]).weight = 0;
       newBoard.grid.get(snake.body[snake.body.length - 1]).weight = 0;
       snake.body.push(snake.body[snake.body.length - 1]);
     } else {
