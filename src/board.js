@@ -97,6 +97,7 @@ class Board {
       for (let i = 0; i < snake.body.length; i++) {
         let body = snake.body[i];
         let tile = this.grid.get(this.coordToChess(body));
+
         if (i === snake.body.length - 1) {
           tile.weight = 1;
         } else {
@@ -111,6 +112,10 @@ class Board {
       //   // Snake is prey, head is not "solid"
       //   snake.body[0].weight = 1;
       // }
+
+      if (snakeObject.body[snake.body.length - 1] == snakeObject.body[snake.body.length - 2]) {
+        this.grid.get(snakeObject.body[snake.body.length - 1]).weight = 0
+      }
 
       if (
         snake.body[0].x == apiRequest.you.body[0].x &&
