@@ -19,6 +19,36 @@ class Board {
     return `${alphabet.charAt(coord.x)}${String(coord.y + 1)}`;
   }
 
+  // For navigating to tail when it's solid (after eating).
+  bestEmptyTile(chess1, chess2) {
+    let output;
+    let start = this.grid.get(chess1)
+    let end = this.grid.get(chess2)
+
+    let dx0 = end.x - start.x;
+    let dy0 = end.y - start.y;
+    let moves = Math.abs(dx0) + Math.abs(dy0);
+
+    for (let dir of ["left", "right", "up", "down"]) {
+      let targetTile = this.grid.get(end[dir])
+      
+      if (!targetTile || targetTile.isWall()) {
+        continue;
+      }
+
+      let dx1 = targetTile.x - start.x;
+      let dy1 = targetTile.y - start.y;
+      let newMoves = Math.abs(dx1) + Math.abs(dy1);
+
+      if (newMoves < moves) {
+        moves = newMoves;
+        output = targetTile;
+      }
+    }
+
+    return output;
+  }
+
   deleteFood(chess) {
     let index = this.food.indexOf(chess);
     if (index > -1) {

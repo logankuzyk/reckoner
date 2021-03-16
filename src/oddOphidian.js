@@ -50,13 +50,7 @@ class OddOphidian {
     let targetTile;
     if (board.grid.get(me.body[me.body.length - 1]).weight === 0) {
       console.log('SOLID TAIL');
-      for (let dir of this.possibleMoves) {
-        if (
-          board.grid.get(me.body[me.body.length - 3])[dir] == tailTile.chess
-        ) {
-          targetTile = board.grid.get(tailTile[dir]);
-        }
-      }
+      targetTile = board.bestEmptyTile(me.body[0], me.body[me.body.length - 1])
     } else {
       targetTile = board.grid.get(me.body[me.body.length - 1]);
     }
@@ -130,27 +124,28 @@ class OddOphidian {
       return score;
     } else if (position == null || board.grid.get(position).isWall()) {
       // move was suicidal
+      // might want to return 0 instead.
+      // this function gets run for all snakes and the static evaluation function is just for me?
+      // if health == 0
       return -Infinity;
     }
 
     let newBoard = clone(board);
-    // console.log(board.snakes.get("me").body)
+
     // Move new board forward.
     let snake = newBoard.snakes.get(snakeId);
 
-    if (newBoard.grid.get(snake.body[0]).food) {
-      newBoard.deleteFood(snake.body[0]);
-    }
-
     snake.body.unshift(position);
     snake.body.pop();
+    newBoard.grid.get(snake.body[1]).weight = 0;
+    snake.health -= 1;
 
     if (newBoard.grid.get(position).food) {
-      newBoard.grid.get(snake.body[1]).weight = 0;
       newBoard.grid.get(snake.body[snake.body.length - 1]).weight = 0;
       snake.body.push(snake.body[snake.body.length - 1]);
+      snake.health = 100;
+      newBoard.deleteFood(snake.body[0]);
     } else {
-      newBoard.grid.get(snake.body[1]).weight = 0;
       newBoard.grid.get(snake.body[snake.body.length - 1]).weight = 1;
     }
 
