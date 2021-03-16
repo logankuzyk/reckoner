@@ -21,9 +21,9 @@ class Board {
 
   // For navigating to tail when it's solid (after eating).
   bestEmptyTile(chess1, chess2) {
-    let output;
     let start = this.grid.get(chess1)
     let end = this.grid.get(chess2)
+    let output = this.grid.get(chess2)
 
     let dx0 = end.x - start.x;
     let dy0 = end.y - start.y;
@@ -40,7 +40,7 @@ class Board {
       let dy1 = targetTile.y - start.y;
       let newMoves = Math.abs(dx1) + Math.abs(dy1);
 
-      if (newMoves < moves) {
+      if (newMoves < moves || output.isWall()) {
         moves = newMoves;
         output = targetTile;
       }
