@@ -122,6 +122,7 @@ class Board {
         snake.body[0].y == apiRequest.you.body[0].y
       ) {
         // console.log(snakeObject)
+        snakeObject.id = "me";
         this.snakes.set('me', snakeObject);
         this.grid.get(this.snakes.get('me').body[0]).weight = 1;
       } else {
@@ -196,7 +197,7 @@ class Board {
       let hunterHead = this.grid.get(snake.body[0])
       let estimatedDistance = aStar.heuristic(hunterHead, preyHead);
 
-      if (snake.body.length <= prey.body.length && estimatedDistance < minDistance) {
+      if (snake.body.length <= prey.body.length && estimatedDistance < minDistance && snake.id !== snakeId) {
         output = snake.id;
       }
     }
@@ -204,7 +205,33 @@ class Board {
     return output;
   }
 
-  closestPrey(snakeId) {}
+  closestPrey(snakeId) {
+    if (this.snakes.size === 0) {
+      return null;
+    }
+    let hunter = this.snakes.get(snakeId)
+    let hunterHead = this.grid.get(hunter.body[0])
+    let minDistance = Infinity;
+    let iterator = this.snakes.values();
+    let output = null;
+
+    while (true) {
+      let snake = iterator.next();
+      if (snake.done) {
+        break;
+      }
+      snake = snake.value;
+
+      let preyHead = this.grid.get(snake.body[0])
+      let estimatedDistance = aStar.heuristic(preyHead, hunterHead);
+
+      if (snake.body.length < hunter.body.length && estimatedDistance < minDistance && snake.id !== snakeId) {
+        output = snake.id;
+      }
+    }
+
+    return output;
+  }
 }
 
 module.exports = Board;
