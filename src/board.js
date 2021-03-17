@@ -62,7 +62,7 @@ class Board {
     let start = this.grid.get(chess);
     let foodChess = this.food[0];
 
-    this.food.forEach((food, index) => {
+    this.food.forEach((food) => {
       let foodTile = this.grid.get(food);
       let estimatedDistance = aStar.heuristic(start, foodTile);
 
@@ -174,6 +174,37 @@ class Board {
       tile.parent = undefined;
     });
   }
+
+  closestHunter(snakeId) {
+    if (this.snakes.size === 0) {
+      return null;
+    }
+
+    let prey = this.snakes.get(snakeId)
+    let preyHead = this.grid.get(prey.body[0])
+    let minDistance = Infinity;
+    let iterator = this.snakes.values();
+    let output = null;
+
+    while (true) {
+      let snake = iterator.next();
+      if (snake.done) {
+        break;
+      }
+      snake = snake.value;
+
+      let hunterHead = this.grid.get(snake.body[0])
+      let estimatedDistance = aStar.heuristic(hunterHead, preyHead);
+
+      if (snake.body.length <= prey.body.length && estimatedDistance < minDistance) {
+        output = snake.id;
+      }
+    }
+
+    return output;
+  }
+
+  closestPrey(snakeId) {}
 }
 
 module.exports = Board;
