@@ -3,7 +3,7 @@ const clone = require('lodash.clonedeep');
 
 class OddOphidian {
   constructor(apiRequest) {
-    this.minMaxDepth = 3;
+    this.minMaxDepth = 5;
     this.board = new Board(apiRequest);
     this.head = this.board.grid.get(this.board.snakes.get('me').body[0]);
     this.possibleMoves = ['left', 'right', 'up', 'down'];
@@ -13,7 +13,7 @@ class OddOphidian {
   evaluatePosition(board) {
     let me = board.snakes.get('me');
 
-    // Output score. Higher is better.
+    // Output score. Higher is better for me, lower is better for opponents.
     let score = 0;
     let iterator = board.snakes.values();
     let targetSnakeHead;
@@ -142,18 +142,18 @@ class OddOphidian {
         return Infinity;
       }
     }
-
-    let newBoard = clone(board);
+    const newBoard = clone(board);
+    const snake = newBoard.snakes.get(snakeId);
 
     // Move new board forward.
-    let snake = newBoard.snakes.get(snakeId);
-
     snake.body.unshift(position);
     snake.body.pop();
     newBoard.grid.get(snake.body[1]).weight = 0;
     snake.health -= 1;
 
     if (newBoard.grid.get(position).food) {
+      // snake ate food
+      // tail will be solid
       newBoard.grid.get(snake.body[snake.body.length - 1]).weight = 0;
       snake.body.push(snake.body[snake.body.length - 1]);
       snake.health = 100;
@@ -162,12 +162,7 @@ class OddOphidian {
       newBoard.grid.get(snake.body[snake.body.length - 1]).weight = 1;
     }
 
-    let maximizing;
-    if (snakeId === 'me') {
-      maximizing = true;
-    } else {
-      maximizing = false;
-    }
+    const maximizing = snakeId == 'me' ? true : false;
 
     if (maximizing) {
       // me trying to make the best choice
@@ -183,13 +178,12 @@ class OddOphidian {
         );
         maxEval = Math.max(maxEval, moveEval);
         alpha = Math.max(alpha, moveEval);
-        if (beta < alpha) {
+        if (beta <= alpha) {
           break;
         }
       }
       return maxEval;
     } else {
-      // other snakes tryna mess with the king
       let minEval = Infinity;
       newBoard.snakes.forEach((snake, snakeId) => {
         for (let move of this.possibleMoves) {
@@ -202,6 +196,10 @@ class OddOphidian {
             beta,
           );
           minEval = Math.min(minEval, moveEval);
+          beta = Math.min(beta, moveEval);
+          if (beta <= alpha) {
+            break;
+          }
         }
       });
       return minEval;
