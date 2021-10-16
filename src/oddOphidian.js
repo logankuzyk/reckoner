@@ -176,7 +176,7 @@ class OddOphidian {
         );
         maxEval = Math.max(maxEval, moveEval);
         alpha = Math.max(alpha, moveEval);
-        if (beta <= alpha) {
+        if (beta < alpha) {
           break;
         }
       }
