@@ -1,7 +1,6 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const logger = require('morgan');
-const fs = require('fs');
 const app = express();
 const OddOphidian = require('./oddOphidian');
 const {
