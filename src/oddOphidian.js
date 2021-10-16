@@ -54,13 +54,10 @@ class OddOphidian {
       score += 4 * (1 / (turnsUntilFood + 1));
     }
 
-    let targetTile;
-    if (board.grid.get(me.body[me.body.length - 1]).weight === 0) {
-      // console.log('SOLID TAIL');
-      targetTile = board.bestEmptyTile(me.body[0], me.body[me.body.length - 1]);
-    } else {
-      targetTile = board.grid.get(me.body[me.body.length - 1]);
-    }
+    const targetTile =
+      board.grid.get(me.body[me.body.length - 1]).weight === 0
+        ? board.bestEmptyTile(me.body[0], me.body[me.body.length - 1])
+        : board.grid.get(me.body[me.body.length - 1]);
 
     turnsUntilTail = board.lengthOfPath(
       board.grid.get(me.body[0]),
