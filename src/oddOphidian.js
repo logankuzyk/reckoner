@@ -57,7 +57,7 @@ class OddOphidian {
     let targetTile;
     if (board.grid.get(me.body[me.body.length - 1]).weight === 0) {
       console.log('SOLID TAIL');
-      targetTile = board.bestEmptyTile(me.body[0], me.body[me.body.length - 1])
+      targetTile = board.bestEmptyTile(me.body[0], me.body[me.body.length - 1]);
     } else {
       targetTile = board.grid.get(me.body[me.body.length - 1]);
     }
@@ -156,7 +156,7 @@ class OddOphidian {
     }
 
     let maximizing;
-    if (snakeId === "me") {
+    if (snakeId === 'me') {
       maximizing = true;
     } else {
       maximizing = false;

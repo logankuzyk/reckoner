@@ -11,7 +11,7 @@ const {
   poweredByHandler,
 } = require('./handlers.js');
 
-app.set('port', process.env.PORT || 5000);
+app.set('port', process.env.PORT || 8080);
 
 app.enable('verbose errors');
 
@@ -24,7 +24,7 @@ app.post('/start', (request, response) => {
 });
 
 app.post('/move', (request, response) => {
-  console.log(`${request.body.turn} : ${request.body.game}`)
+  console.log(`${request.body.turn} : ${request.body.game}`);
   const oddOphidian = new OddOphidian(request.body);
   const data = {
     move: oddOphidian.move,
