@@ -56,7 +56,7 @@ class OddOphidian {
 
     let targetTile;
     if (board.grid.get(me.body[me.body.length - 1]).weight === 0) {
-      console.log('SOLID TAIL');
+      // console.log('SOLID TAIL');
       targetTile = board.bestEmptyTile(me.body[0], me.body[me.body.length - 1]);
     } else {
       targetTile = board.grid.get(me.body[me.body.length - 1]);
@@ -109,8 +109,8 @@ class OddOphidian {
     // } else {
     //   return -Infinity;
     // }
-    console.log(`turn until food ${turnsUntilFood}`);
-    console.log(`turns until tail ${turnsUntilTail}`);
+    // console.log(`turn until food ${turnsUntilFood}`);
+    // console.log(`turns until tail ${turnsUntilTail}`);
     // console.log(`turns until kill ${turnsUntilKill}`)
     // console.log(`turns until other tail ${turnsUntilOtherTail}`)
 
@@ -128,12 +128,22 @@ class OddOphidian {
       let score = this.evaluatePosition(board);
 
       return score;
-    } else if (position == null || board.grid.get(position).isWall()) {
+    }
+
+    if (
+      position == null ||
+      board.grid.get(position).isWall() ||
+      board.snakes.get(snakeId).health === 0
+    ) {
       // move was suicidal
       // might want to return 0 instead.
       // this function gets run for all snakes and the static evaluation function is just for me?
       // if health == 0
-      return -Infinity;
+      if (snakeId === 'me') {
+        return -Infinity;
+      } else {
+        return Infinity;
+      }
     }
 
     let newBoard = clone(board);
