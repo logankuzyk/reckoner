@@ -20,6 +20,7 @@ class Board {
   }
 
   // For navigating to tail when it's solid (after eating).
+  // Returns the best move when navigating from chess1 to chess2.
   bestEmptyTile(chess1, chess2) {
     let start = this.grid.get(chess1);
     let end = this.grid.get(chess2);
@@ -87,6 +88,16 @@ class Board {
 
   getSnake(snakeId) {
     return this.snakes.filter((snake) => snake.id === snakeId)[0];
+  }
+
+  killSnake(snakeId) {
+    const snake = this.getSnake(snakeId);
+
+    snake.body.forEach((body) => {
+      this.grid.get(body).weight = 1;
+    });
+
+    this.snakes = this.snakes.filter((snake) => snake.id !== snakeId);
   }
 
   loadGamePieces(apiRequest) {
