@@ -36,7 +36,6 @@ class OddOphidian {
       turnsUntilFood = board.lengthOfPath(
         board.grid.get(snake.body[0]),
         board.grid.get(board.closestFood(snake.body[0])),
-        board,
       );
     }
     if (board.grid.get(snake.body[0]).food) {
@@ -53,7 +52,6 @@ class OddOphidian {
     turnsUntilTail = board.lengthOfPath(
       board.grid.get(snake.body[0]),
       targetTile,
-      board,
     );
 
     if (isFinite(turnsUntilTail)) {
@@ -64,7 +62,6 @@ class OddOphidian {
       turnsUntilKill = board.lengthOfPath(
         board.grid.get(snake.body[0]),
         board.grid.get(targetSnakeHead),
-        board,
       );
     } else {
       turnsUntilKill = Infinity;
