@@ -209,7 +209,7 @@ class Board {
       }
     });
 
-    return output;
+    return this.getSnake(output);
   }
 
   closestPrey(snakeId) {
@@ -234,7 +234,7 @@ class Board {
       }
     });
 
-    return output;
+    return this.getSnake(output);
   }
 }
 

@@ -1,95 +1,70 @@
 {
   "game": {
-    "id": "f71e2f08-c780-4497-8f37-655d0f42a961",
-    "ruleset": { "foodSpawnChance": "15", "minimumFood": "1", "name": "solo" },
+    "id": "ed59ef4f-2232-4d1c-a628-4bb7427406b9",
+    "ruleset": {
+      "foodSpawnChance": "15",
+      "minimumFood": "1",
+      "name": "standard"
+    },
     "timeout": 500
   },
-  "turn": 178,
+  "turn": 5,
   "board": {
     "width": 11,
     "height": 11,
     "food": [
-      { "x": 10, "y": 9 },
-      { "x": 8, "y": 2 },
-      { "x": 3, "y": 6 },
-      { "x": 5, "y": 0 },
-      { "x": 4, "y": 1 },
-      { "x": 5, "y": 4 },
-      { "x": 0, "y": 9 },
-      { "x": 10, "y": 10 },
-      { "x": 8, "y": 0 }
+      { "x": 10, "y": 4 },
+      { "x": 5, "y": 5 },
+      { "x": 4, "y": 2 }
     ],
     "hazards": [],
     "snakes": [
       {
-        "id": "gs_rC7YpxBThcHtjxg8FrqYmMTG",
+        "id": "gs_Jkx3GrD8CqCFv7J84Dq3pWfJ",
         "name": "Odd Ophidian",
         "body": [
-          { "x": 0, "y": 8 },
-          { "x": 1, "y": 8 },
-          { "x": 2, "y": 8 },
-          { "x": 3, "y": 8 },
-          { "x": 4, "y": 8 },
-          { "x": 5, "y": 8 },
-          { "x": 6, "y": 8 },
-          { "x": 7, "y": 8 },
-          { "x": 7, "y": 9 },
-          { "x": 6, "y": 9 },
-          { "x": 5, "y": 9 },
-          { "x": 5, "y": 10 },
-          { "x": 6, "y": 10 },
-          { "x": 7, "y": 10 },
-          { "x": 8, "y": 10 },
-          { "x": 8, "y": 9 },
-          { "x": 8, "y": 8 },
-          { "x": 8, "y": 7 },
-          { "x": 7, "y": 7 },
-          { "x": 6, "y": 7 },
-          { "x": 5, "y": 7 },
-          { "x": 4, "y": 7 },
-          { "x": 3, "y": 7 }
+          { "x": 3, "y": 10 },
+          { "x": 2, "y": 10 },
+          { "x": 1, "y": 10 },
+          { "x": 0, "y": 10 }
         ],
-        "health": 89,
-        "latency": 48,
-        "head": { "x": 0, "y": 8 },
-        "length": 23,
+        "health": 97,
+        "latency": 51,
+        "head": { "x": 3, "y": 10 },
+        "length": 4,
+        "shout": "",
+        "squad": ""
+      },
+      {
+        "id": "gs_Fvd6yQWjCmbtrhQfp7MKQXrc",
+        "name": "actual-test-snake",
+        "body": [
+          { "x": 10, "y": 9 },
+          { "x": 9, "y": 9 },
+          { "x": 9, "y": 8 }
+        ],
+        "health": 95,
+        "latency": 217,
+        "head": { "x": 10, "y": 9 },
+        "length": 3,
         "shout": "",
         "squad": ""
       }
     ]
   },
   "you": {
-    "id": "gs_rC7YpxBThcHtjxg8FrqYmMTG",
+    "id": "gs_Jkx3GrD8CqCFv7J84Dq3pWfJ",
     "name": "Odd Ophidian",
     "body": [
-      { "x": 0, "y": 8 },
-      { "x": 1, "y": 8 },
-      { "x": 2, "y": 8 },
-      { "x": 3, "y": 8 },
-      { "x": 4, "y": 8 },
-      { "x": 5, "y": 8 },
-      { "x": 6, "y": 8 },
-      { "x": 7, "y": 8 },
-      { "x": 7, "y": 9 },
-      { "x": 6, "y": 9 },
-      { "x": 5, "y": 9 },
-      { "x": 5, "y": 10 },
-      { "x": 6, "y": 10 },
-      { "x": 7, "y": 10 },
-      { "x": 8, "y": 10 },
-      { "x": 8, "y": 9 },
-      { "x": 8, "y": 8 },
-      { "x": 8, "y": 7 },
-      { "x": 7, "y": 7 },
-      { "x": 6, "y": 7 },
-      { "x": 5, "y": 7 },
-      { "x": 4, "y": 7 },
-      { "x": 3, "y": 7 }
+      { "x": 3, "y": 10 },
+      { "x": 2, "y": 10 },
+      { "x": 1, "y": 10 },
+      { "x": 0, "y": 10 }
     ],
-    "health": 89,
-    "latency": 48,
-    "head": { "x": 0, "y": 8 },
-    "length": 23,
+    "health": 97,
+    "latency": 51,
+    "head": { "x": 3, "y": 10 },
+    "length": 4,
     "shout": "",
     "squad": ""
   }
