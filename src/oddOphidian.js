@@ -15,8 +15,8 @@ class OddOphidian {
 
     // Output score. Higher is better for me, lower is better for opponents.
     let score = 0;
-    let targetSnakeHead = board.closestHunter(snakeId)
-      ? board.closestHunter(snakeId).body[0]
+    let targetSnakeHead = board.closestPrey(snakeId)
+      ? board.closestPrey(snakeId).body[0]
       : null;
     let scarySnakeTail = board.closestHunter(snakeId)
       ? board.closestHunter(snakeId).body[
@@ -116,11 +116,7 @@ class OddOphidian {
       board.getSnake(snakeId).health === 0
     ) {
       // Death
-      if (snakeId === 'me') {
-        return -Infinity;
-      } else {
-        return Infinity;
-      }
+      return -Infinity;
     }
 
     const newBoard = clone(board);
