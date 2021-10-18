@@ -136,6 +136,9 @@ class Board {
         this.snakes[index] = snakeObject;
       }
     });
+
+    // Put 'me' at the end of the list so it's easier to make all other snakes go first.
+    this.snakes.sort((a) => (a.id === 'me' ? 0 : -1));
   }
 
   makeBoard(apiRequest) {
