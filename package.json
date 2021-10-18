@@ -22,6 +22,6 @@
   },
   "scripts": {
     "start": "cross-env PORT=8080 node src/index.js",
-    "start:dev": "nodemon src/"
+    "dev": "nodemon src/"
   }
 }
