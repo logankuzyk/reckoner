@@ -21,17 +21,17 @@ class Board {
 
   // For navigating to tail when it's solid (after eating).
   bestEmptyTile(chess1, chess2) {
-    let start = this.grid.get(chess1)
-    let end = this.grid.get(chess2)
-    let output = this.grid.get(chess2)
+    let start = this.grid.get(chess1);
+    let end = this.grid.get(chess2);
+    let output = this.grid.get(chess2);
 
     let dx0 = end.x - start.x;
     let dy0 = end.y - start.y;
     let moves = Math.abs(dx0) + Math.abs(dy0);
 
-    for (let dir of ["left", "right", "up", "down"]) {
-      let targetTile = this.grid.get(end[dir])
-      
+    for (let dir of ['left', 'right', 'up', 'down']) {
+      let targetTile = this.grid.get(end[dir]);
+
       if (!targetTile || targetTile.isWall()) {
         continue;
       }
@@ -113,8 +113,11 @@ class Board {
       //   snake.body[0].weight = 1;
       // }
 
-      if (snakeObject.body[snake.body.length - 1] == snakeObject.body[snake.body.length - 2]) {
-        this.grid.get(snakeObject.body[snake.body.length - 1]).weight = 0
+      if (
+        snakeObject.body[snake.body.length - 1] ==
+        snakeObject.body[snake.body.length - 2]
+      ) {
+        this.grid.get(snakeObject.body[snake.body.length - 1]).weight = 0;
       }
 
       if (
@@ -122,7 +125,7 @@ class Board {
         snake.body[0].y == apiRequest.you.body[0].y
       ) {
         // console.log(snakeObject)
-        snakeObject.id = "me";
+        snakeObject.id = 'me';
         this.snakes.set('me', snakeObject);
         this.grid.get(this.snakes.get('me').body[0]).weight = 1;
       } else {
@@ -181,8 +184,8 @@ class Board {
       return null;
     }
 
-    let prey = this.snakes.get(snakeId)
-    let preyHead = this.grid.get(prey.body[0])
+    let prey = this.snakes.get(snakeId);
+    let preyHead = this.grid.get(prey.body[0]);
     let minDistance = Infinity;
     let iterator = this.snakes.values();
     let output = null;
@@ -194,10 +197,14 @@ class Board {
       }
       snake = snake.value;
 
-      let hunterHead = this.grid.get(snake.body[0])
+      let hunterHead = this.grid.get(snake.body[0]);
       let estimatedDistance = aStar.heuristic(hunterHead, preyHead);
 
-      if (snake.body.length <= prey.body.length && estimatedDistance < minDistance && snake.id !== snakeId) {
+      if (
+        snake.body.length <= prey.body.length &&
+        estimatedDistance < minDistance &&
+        snake.id !== snakeId
+      ) {
         output = snake.id;
       }
     }
@@ -209,8 +216,8 @@ class Board {
     if (this.snakes.size === 0) {
       return null;
     }
-    let hunter = this.snakes.get(snakeId)
-    let hunterHead = this.grid.get(hunter.body[0])
+    let hunter = this.snakes.get(snakeId);
+    let hunterHead = this.grid.get(hunter.body[0]);
     let minDistance = Infinity;
     let iterator = this.snakes.values();
     let output = null;
@@ -222,10 +229,14 @@ class Board {
       }
       snake = snake.value;
 
-      let preyHead = this.grid.get(snake.body[0])
+      let preyHead = this.grid.get(snake.body[0]);
       let estimatedDistance = aStar.heuristic(preyHead, hunterHead);
 
-      if (snake.body.length < hunter.body.length && estimatedDistance < minDistance && snake.id !== snakeId) {
+      if (
+        snake.body.length < hunter.body.length &&
+        estimatedDistance < minDistance &&
+        snake.id !== snakeId
+      ) {
         output = snake.id;
       }
     }
