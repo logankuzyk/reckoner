@@ -5,38 +5,32 @@ class OddOphidian {
   constructor(apiRequest) {
     this.minMaxDepth = 5;
     this.board = new Board(apiRequest);
-    this.head = this.board.grid.get(this.board.snakes.get('me').body[0]);
+    this.head = this.board.grid.get(this.board.getSnake('me').body[0]);
     this.possibleMoves = ['left', 'right', 'up', 'down'];
     this.move = this.weighTheConsequences();
   }
 
   evaluatePosition(board) {
-    let me = board.snakes.get('me');
+    let me = board.getSnake('me');
 
     // Output score. Higher is better for me, lower is better for opponents.
     let score = 0;
-    let iterator = board.snakes.values();
     let targetSnakeHead;
     let scarySnakeTail;
 
     let turnsUntilTail;
     let turnsUntilFood;
     let turnsUntilKill;
-    let turnsUntilOtherFood;
+    let turnsUntilOtherTail;
 
-    while (true) {
-      let snake = iterator.next();
-      if (snake.done) {
-        break;
-      }
-
+    this.board.snakes.forEach((snake) => {
       // TODO: make it pay attention to the closest snakes (and if they're bigger or smaller)
-      if (snake.value.body.length + 1 < me.body.length) {
-        targetSnakeHead = snake.value.body[0];
+      if (snake.body.length + 1 < me.body.length) {
+        targetSnakeHead = snake.body[0];
       } else {
-        scarySnakeTail = snake.value.body[snake.value.body.length - 1];
+        scarySnakeTail = snake.body[snake.body.length - 1];
       }
-    }
+    });
 
     // TODO: use food generation probability.
     // TODO: improve closest food technique.
@@ -51,7 +45,7 @@ class OddOphidian {
     if (board.grid.get(me.body[0]).food) {
       score += 4;
     } else if (isFinite(turnsUntilFood)) {
-      score += 4 * (1 / (turnsUntilFood + 1));
+      score += 4 / (turnsUntilFood + 1);
     }
 
     const targetTile =
@@ -82,7 +76,7 @@ class OddOphidian {
     // if (me.body[0] == targetSnakeHead) {
     //   score += 4;
     // } else if (isFinite(turnsUntilKill)) {
-    //   score += 4 * (1 / (turnsUntilKill + 1));
+    //   score += 4 / (turnsUntilKill + 1);
     // }
 
     // if (scarySnakeTail) {
@@ -92,19 +86,11 @@ class OddOphidian {
     //     board,
     //   );
     // } else {
-    //   turnsUntilOtherTail = 0;
+    //   turnsUntilOtherTail = Infinity;
     // }
 
-    // if (isFinite(turnsUntilTail)) {
-    //   if (isFinite(turnsUntilFood)) {
-    //     // console.log("returning turns until food")
-    //     return -turnsUntilFood;
-    //   } else {
-    //     // console.log("returning turns until tail")
-    //     return -turnsUntilTail;
-    //   }
-    // } else {
-    //   return -Infinity;
+    // if (isFinite(turnsUntilOtherTail)) {
+    //   score += 4 / (turnsUntilOtherTail + 1);
     // }
     // console.log(`turn until food ${turnsUntilFood}`);
     // console.log(`turns until tail ${turnsUntilTail}`);
@@ -130,7 +116,7 @@ class OddOphidian {
     if (
       position == null ||
       board.grid.get(position).isWall() ||
-      board.snakes.get(snakeId).health === 0
+      board.getSnake(snakeId).health === 0
     ) {
       // move was suicidal
       // might want to return 0 instead.
@@ -142,8 +128,9 @@ class OddOphidian {
         return Infinity;
       }
     }
+
     const newBoard = clone(board);
-    const snake = newBoard.snakes.get(snakeId);
+    const snake = newBoard.getSnake(snakeId);
 
     // Move new board forward.
     snake.body.unshift(position);
@@ -165,12 +152,11 @@ class OddOphidian {
     const maximizing = snakeId == 'me' ? true : false;
 
     if (maximizing) {
-      // me trying to make the best choice
       let maxEval = -Infinity;
       for (let move of this.possibleMoves) {
         let moveEval = this.minMax(
           newBoard,
-          newBoard.grid.get(newBoard.snakes.get('me').body[0])[move],
+          newBoard.grid.get(newBoard.getSnake('me').body[0])[move],
           'me',
           depth - 1,
           alpha,
