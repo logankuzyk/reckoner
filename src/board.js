@@ -139,7 +139,6 @@ class Board {
         snake.body[0].x == apiRequest.you.body[0].x &&
         snake.body[0].y == apiRequest.you.body[0].y
       ) {
-        // console.log(snakeObject)
         snakeObject.id = 'me';
         this.snakes[index] = snakeObject;
         this.grid.get(this.snakes[index].body[0]).weight = 1;
@@ -170,8 +169,8 @@ class Board {
     return board;
   }
 
-  lengthOfPath(tile1, tile2, board) {
-    let path = aStar.search(tile1, tile2, board);
+  lengthOfPath(tile1, tile2) {
+    let path = aStar.search(tile1, tile2, this);
     // console.log(`Path from ${tile1.chess} to ${tile2.chess}`);
     // console.log(path);
     if (path.length === 0) {

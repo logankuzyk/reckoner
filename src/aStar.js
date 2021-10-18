@@ -95,7 +95,6 @@ const aStar = {
       return pathTo(closestNode);
     }
 
-    console.log(`Couldn't find path from ${start.chess} to ${end.chess}`);
     return [];
   },
   heuristic: (coord1, coord2) => {
