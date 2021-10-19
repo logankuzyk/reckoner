@@ -58,24 +58,6 @@ class Board {
     this.grid.get(chess).food = false;
   }
 
-  closestFood(chess) {
-    let minDistance = Infinity;
-    let start = this.grid.get(chess);
-    let foodChess = this.food[0];
-
-    this.food.forEach((food) => {
-      let foodTile = this.grid.get(food);
-      let estimatedDistance = aStar.heuristic(start, foodTile);
-
-      if (estimatedDistance < minDistance) {
-        minDistance = estimatedDistance;
-        foodChess = foodTile.chess;
-      }
-    });
-
-    return foodChess;
-  }
-
   isNextToFood(chess) {
     let tile = this.grid.get(chess);
     for (let dir of ['left', 'right', 'up', 'down']) {
@@ -196,55 +178,79 @@ class Board {
     });
   }
 
-  closestHunter(snakeId) {
-    if (this.snakes.length === 0) {
+  closestFoods(chess) {
+    if (this.food.length === 0) {
       return null;
     }
 
-    let prey = this.getSnake(snakeId);
-    let preyHead = this.grid.get(prey.body[0]);
-    let minDistance = Infinity;
-    let output = null;
+    const head = this.grid.get(chess);
 
-    this.snakes.forEach((snake) => {
-      let hunterHead = this.grid.get(snake.body[0]);
-      let estimatedDistance = aStar.heuristic(hunterHead, preyHead);
-
+    const foods = this.food.sort((a, b) => {
       if (
-        snake.body.length <= prey.body.length &&
-        estimatedDistance < minDistance &&
-        snake.id !== snakeId
+        aStar.heuristic(head, this.grid.get(a)) <
+        aStar.heuristic(head, this.grid.get(b))
       ) {
-        output = snake.id;
+        return -1;
+      } else {
+        return 1;
       }
     });
 
-    return this.getSnake(output);
+    return foods;
   }
 
-  closestPrey(snakeId) {
-    if (this.snakes.size === 0) {
+  closestHunters(snakeId) {
+    if (this.snakes.length === 1) {
       return null;
     }
-    let hunter = this.getSnake(snakeId);
-    let hunterHead = this.grid.get(hunter.body[0]);
-    let minDistance = Infinity;
-    let output = null;
 
-    this.snakes.forEach((snake) => {
-      let preyHead = this.grid.get(snake.body[0]);
-      let estimatedDistance = aStar.heuristic(preyHead, hunterHead);
+    const prey = this.getSnake(snakeId);
+    const preyHead = this.grid.get(prey.body[0]);
 
-      if (
-        snake.body.length < hunter.body.length &&
-        estimatedDistance < minDistance &&
-        snake.id !== snakeId
-      ) {
-        output = snake.id;
-      }
-    });
+    const hunters = this.snakes
+      .filter(
+        (snake) =>
+          snake.id !== prey.id && snake.body.length <= prey.body.length,
+      )
+      .sort((a, b) => {
+        if (
+          aStar.heuristic(preyHead, this.grid.get(a.body[0])) <
+          aStar.heuristic(preyHead, this.grid.get(b.body[0]))
+        ) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
 
-    return this.getSnake(output);
+    return hunters;
+  }
+
+  closestPreys(snakeId) {
+    if (this.snakes.length === 1) {
+      return null;
+    }
+
+    const hunter = this.getSnake(snakeId);
+    const hunterHead = this.grid.get(hunter.body[0]);
+
+    const preys = this.snakes
+      .filter(
+        (snake) =>
+          snake.id !== hunter.id && snake.body.length > hunter.body.length,
+      )
+      .sort((a, b) => {
+        if (
+          aStar.heuristic(hunterHead, this.grid.get(a.body[0])) <
+          aStar.heuristic(hunterHead, this.grid.get(b.body[0]))
+        ) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+
+    return preys;
   }
 }
 
