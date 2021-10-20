@@ -1,6 +1,6 @@
 {
   "name": "odd-ophidian",
-  "description": "Logan Kuzyk's Spring 2021 Battlesnake",
+  "description": "",
   "version": "0.0.0",
   "private": true,
   "author": "logankuzyk",
@@ -16,7 +16,6 @@
     "nodemon": "^1.19.4",
     "prettier": "2.2.1"
   },
-  "main": "index.js",
   "engines": {
     "node": ">=10.0"
   },
