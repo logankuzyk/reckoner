@@ -3,7 +3,7 @@ const clone = require('lodash.clonedeep');
 
 class OddOphidian {
   constructor(apiRequest) {
-    this.minMaxDepth = 4;
+    this.minMaxDepth = 1;
     this.board = new Board(apiRequest);
     this.head = this.board.grid.get(this.board.getSnake('me').body[0]);
     this.possibleMoves = ['left', 'right', 'up', 'down'];
@@ -11,67 +11,74 @@ class OddOphidian {
   }
 
   evaluatePosition(board, snakeId) {
-    let snake = board.getSnake(snakeId);
+    console.log(snakeId);
+    const snake = board.getSnake(snakeId);
+    const head = snake.body[0];
+    const tail = snake.body[snake.body.length - 1];
 
-    // Output score. Higher is better for me, lower is better for opponents.
+    // Higher is better for given snake.
     let score = 0;
-    let targetSnakeHead = board.closestPrey(snakeId)
-      ? board.closestPrey(snakeId).body[0]
-      : null;
-    let scarySnakeTail = board.closestHunter(snakeId)
-      ? board.closestHunter(snakeId).body[
-          board.closestHunter(snakeId).body.length - 1
-        ]
-      : null;
 
-    let turnsUntilTail;
-    let turnsUntilFood;
-    let turnsUntilKill;
-    let turnsUntilOtherTail;
+    const hunters = board.closestHunters(snakeId);
+    const preys = board.closestPreys(snakeId);
+
+    const turnsUntilTail = board.lengthOfPath(head, tail);
+    //not working
+    const turnsUntilFood = board.lengthOfPath(
+      head,
+      board.closestFoods(snake.body[0])[0],
+    );
+
+    if (snake.health === 0 || snake.health <= turnsUntilFood) {
+      return -Infinity;
+    }
+    // const turnsUntilKill = prey ? board.lengthOfPath(head, prey.body[0]) :
+
+    // let turnsUntilOtherTail;
 
     // TODO: use food generation probability.
     // TODO: improve closest food technique.
-    // console.log(board.grid.get(board.closestFood(me.body[0])))
-    if (board.food.length > 0) {
-      turnsUntilFood = board.lengthOfPath(
-        board.grid.get(snake.body[0]),
-        board.grid.get(board.closestFood(snake.body[0])),
-      );
-    }
-    if (board.grid.get(snake.body[0]).food) {
-      score += 4;
-    } else if (isFinite(turnsUntilFood)) {
-      score += 4 / (turnsUntilFood + 1);
-    }
+    // console.log(board.grid.get(board.closestFoods(me.body[0])))
+    // if (board.food.length > 0) {
+    //   turnsUntilFood = board.lengthOfPath(
+    //     board.grid.get(snake.body[0]),
+    //     board.grid.get(board.closestFoods(snake.body[0])),
+    //   );
+    // }
+    // if (board.grid.get(snake.body[0]).food) {
+    //   score += 4;
+    // } else if (isFinite(turnsUntilFood)) {
+    //   score += 4 / (turnsUntilFood + 1);
+    // }
 
-    const targetTile =
-      board.grid.get(snake.body[snake.body.length - 1]).weight === 0
-        ? board.bestEmptyTile(snake.body[0], snake.body[snake.body.length - 1])
-        : board.grid.get(snake.body[snake.body.length - 1]);
+    // const targetTile =
+    //   board.grid.get(snake.body[snake.body.length - 1]).weight === 0
+    //     ? board.bestEmptyTile(snake.body[0], snake.body[snake.body.length - 1])
+    //     : board.grid.get(snake.body[snake.body.length - 1]);
 
-    turnsUntilTail = board.lengthOfPath(
-      board.grid.get(snake.body[0]),
-      targetTile,
-    );
+    // turnsUntilTail = board.lengthOfPath(
+    //   board.grid.get(snake.body[0]),
+    //   targetTile,
+    // );
 
-    if (isFinite(turnsUntilTail)) {
-      score += 8;
-    }
+    // if (isFinite(turnsUntilTail)) {
+    //   score += 8;
+    // }
 
-    if (targetSnakeHead) {
-      turnsUntilKill = board.lengthOfPath(
-        board.grid.get(snake.body[0]),
-        board.grid.get(targetSnakeHead),
-      );
-    } else {
-      turnsUntilKill = Infinity;
-    }
+    // if (targetSnakeHead) {
+    //   turnsUntilKill = board.lengthOfPath(
+    //     board.grid.get(snake.body[0]),
+    //     board.grid.get(targetSnakeHead),
+    //   );
+    // } else {
+    //   turnsUntilKill = Infinity;
+    // }
 
-    if (snake.body[0] == targetSnakeHead) {
-      score += 16;
-    } else if (isFinite(turnsUntilKill)) {
-      score += 16 / (turnsUntilKill + 1);
-    }
+    // if (snake.body[0] == targetSnakeHead) {
+    //   score += 16;
+    // } else if (isFinite(turnsUntilKill)) {
+    //   score += 16 / (turnsUntilKill + 1);
+    // }
 
     // if (scarySnakeTail) {
     //   turnsUntilOtherTail = board.lengthOfPath(
@@ -94,91 +101,63 @@ class OddOphidian {
     return score;
   }
 
-  // board: game board representing a possible move sequence (instanceof Board)
-  // position: new head position of given snake
-  // snakeId: ID of snake that moved in the last turn.
-  // depth: maximum depth of move tree.
-  // alpha/beta: for pruning.
-  minMax(board, position, snakeId, depth, alpha, beta) {
+  max(board, position, depth) {
     if (depth === 0) {
-      // return static evaluation
-      let score = this.evaluatePosition(board, snakeId);
-
-      return score;
+      //snake to return value for is the last one to have moved
+      //need to go from smallest to biggest because that's the reverse of how it was called
+      const movedSnakes = board.snakes.filter((snake) => snake.moved);
+      const lastSnake = movedSnakes[movedSnakes.length - 1];
+      return this.evaluatePosition(board, lastSnake.id);
     }
+    // pretty sure this is impossible
+    // if (!snakeId) {
+    //   // all snakes have moved this turn
+    //   return this.max(board, position, depth - 1);
+    // }
+    const snake = board.snakes.filter((snake) => !snake.moved)[0];
 
     if (
-      position == null ||
+      position === null ||
       board.grid.get(position).isWall() ||
-      board.getSnake(snakeId).health === 0
+      board.getSnake(snake.id).health === 0
     ) {
-      // Death
+      // might need to change this to move onto then next snake
       return -Infinity;
     }
 
     const newBoard = clone(board);
-    const snake = newBoard.getSnake(snakeId);
+    const newSnake = newBoard.getSnake(snake.id);
 
     // Move new board forward.
-    snake.body.unshift(position);
-    snake.body.pop();
-    newBoard.grid.get(snake.body[1]).weight = 0;
-    snake.health -= 1;
+    newSnake.body.unshift(position);
+    newSnake.body.pop();
+    newSnake.health -= 1;
+    newSnake.moved = true;
 
     if (newBoard.grid.get(position).food) {
-      // snake ate food
-      // tail will be solid
-      newBoard.grid.get(snake.body[snake.body.length - 1]).weight = 0;
-      snake.body.push(snake.body[snake.body.length - 1]);
-      snake.health = 100;
-      newBoard.deleteFood(snake.body[0]);
+      newBoard.grid.get(newSnake.body[newSnake.body.length - 1]).weight = 0;
+      newSnake.body.push(newSnake.body[newSnake.body.length - 1]);
+      newSnake.health = 100;
+      newBoard.deleteFood(newSnake.body[0]);
     } else {
-      newBoard.grid.get(snake.body[snake.body.length - 1]).weight = 1;
+      newBoard.grid.get(newSnake.body[newSnake.body.length - 1]).weight = 1;
     }
 
-    const maximizing = snakeId == 'me' ? true : false;
+    let maxEval = -Infinity;
 
-    if (maximizing) {
-      let maxEval = -Infinity;
-      for (let move of this.possibleMoves) {
-        let moveEval = this.minMax(
-          newBoard,
-          newBoard.grid.get(newBoard.getSnake('me').body[0])[move],
-          'me',
-          depth - 1,
-          alpha,
-          beta,
-        );
-        maxEval = Math.max(maxEval, moveEval);
-        alpha = Math.max(alpha, moveEval);
-        if (beta <= alpha) {
-          break;
-        }
-      }
-      return maxEval;
-    } else {
-      let minEval = Infinity;
-      newBoard.snakes.forEach((snake, snakeId) => {
+    newBoard.snakes
+      .filter((snake) => !snake.moved)
+      .forEach((snake) => {
         for (let move of this.possibleMoves) {
-          let moveEval =
-            0 -
-            this.minMax(
-              newBoard,
-              newBoard.grid.get(snake.body[0])[move],
-              snakeId,
-              depth - 1,
-              alpha,
-              beta,
-            );
-          minEval = Math.min(minEval, moveEval);
-          beta = Math.min(beta, moveEval);
-          if (beta <= alpha) {
-            break;
-          }
+          let moveEval = this.max(
+            newBoard,
+            newBoard.grid.get(snake.body[0])[move],
+            depth,
+          );
+          maxEval = Math.max(maxEval, moveEval);
         }
       });
-      return minEval;
-    }
+    return maxEval;
   }
 
   weighTheConsequences() {
@@ -186,14 +165,7 @@ class OddOphidian {
     let maxEval = -Infinity;
 
     for (let move of this.possibleMoves) {
-      let moveEval = this.minMax(
-        this.board,
-        this.head[move],
-        'me',
-        this.minMaxDepth,
-        -Infinity,
-        Infinity,
-      );
+      const moveEval = this.max(this.board, this.head[move], this.minMaxDepth);
       console.log(`${move}: ${moveEval}`);
       if (moveEval > maxEval) {
         maxEval = moveEval;
