@@ -5,7 +5,7 @@ let request = fs.readFileSync(__dirname + '/request.json');
 request = JSON.parse(request);
 // let board = new Board(request)
 
-const OddOphidian = require('../src/oddOphidian');
+const Reckoner = require('../src/reckoner');
 // console.log(board.lengthOfPath("a10", "b10"))
-let snake = new OddOphidian(request);
+let snake = new Reckoner(request);
 console.log(`CHOSEN MOVE: ${snake.move}`);

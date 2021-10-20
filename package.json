@@ -1,10 +1,10 @@
 {
-  "name": "odd-ophidian",
+  "name": "reckoner",
   "description": "",
   "version": "0.0.0",
   "private": true,
   "author": "logankuzyk",
-  "repository": "https://github.com/logankuzyk/odd-ophidian",
+  "repository": "https://github.com/logankuzyk/reckoner",
   "dependencies": {
     "body-parser": "^1.18.3",
     "cross-env": "^5.2.0",
