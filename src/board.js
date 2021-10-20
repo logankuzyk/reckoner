@@ -168,6 +168,11 @@ class Board {
   }
 
   lengthOfPath(tile1, tile2) {
+    if (typeof tile1 === 'string' || typeof tile2 === 'string') {
+      tile1 = this.grid.get(tile1);
+      tile2 = this.grid.get(tile2);
+    }
+
     if (tile1.chess === tile2.chess) {
       return 0;
     }
