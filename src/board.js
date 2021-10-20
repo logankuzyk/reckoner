@@ -148,6 +148,20 @@ class Board {
     });
   }
 
+  snakePossibleMoves(snakeId) {
+    const snake = this.getSnake(snakeId);
+    const head = this.grid.get(snake.body[0]);
+    const options = [];
+
+    for (let move of ['left', 'right', 'up', 'down']) {
+      if (head[move] && !this.grid.get(head[move]).isWall()) {
+        options.push(move);
+      }
+    }
+
+    return options;
+  }
+
   makeBoard(apiRequest) {
     let board = new Map();
 
