@@ -123,14 +123,30 @@ class Board {
       ) {
         snakeObject.id = 'me';
         this.snakes[index] = snakeObject;
-        this.grid.get(this.snakes[index].body[0]).weight = 1;
       } else {
         this.snakes[index] = snakeObject;
       }
     });
 
-    // Put 'me' at the end of the list so it's easier to make all other snakes go first.
-    this.snakes.sort((a) => (a.id === 'me' ? 0 : -1));
+    // Sort snakes in descending order. If two snakes are the same size, the one that is closest to me goes before the other.
+    this.snakes.sort((a, b) => {
+      if (a.body.length === b.body.length) {
+        const me = this.grid.get(this.getSnake('me').body[0]);
+        const aHead = this.grid.get(a.body[0]);
+        const bHead = this.grid.get(b.body[0]);
+
+        if (this.lengthOfPath(me, aHead) < this.lengthOfPath(me, bHead)) {
+          return 1;
+        } else {
+          return -1;
+        }
+      } else if (a.body.length < b.body.length) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+    console.log(this.snakes.filter((snake) => snake.length));
   }
 
   makeBoard(apiRequest) {
@@ -152,7 +168,20 @@ class Board {
   }
 
   lengthOfPath(tile1, tile2) {
-    let path = aStar.search(tile1, tile2, this);
+    if (tile1.chess === tile2.chess) {
+      return 0;
+    }
+
+    const tile1Weight = tile1.weight;
+    const tile2Weight = tile2.weight;
+
+    tile1.weight = 1;
+    tile2.weight = 1;
+
+    const path = aStar.search(tile1, tile2, this);
+
+    tile1.weight = tile1Weight;
+    tile2.weight = tile2Weight;
     // console.log(`Path from ${tile1.chess} to ${tile2.chess}`);
     // console.log(path);
     if (path.length === 0) {
