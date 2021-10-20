@@ -146,7 +146,6 @@ class Board {
         return -1;
       }
     });
-    console.log(this.snakes.filter((snake) => snake.length));
   }
 
   makeBoard(apiRequest) {
