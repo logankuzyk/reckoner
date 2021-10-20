@@ -2,7 +2,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const logger = require('morgan');
 const app = express();
-const OddOphidian = require('./oddOphidian');
+const Reckoner = require('./reckoner');
 const {
   fallbackHandler,
   notFoundHandler,
@@ -24,9 +24,9 @@ app.post('/start', (request, response) => {
 
 app.post('/move', (request, response) => {
   console.log(`${request.body.turn} : ${request.body.game}`);
-  const oddOphidian = new OddOphidian(request.body);
+  const reckoner = new Reckoner(request.body);
   const data = {
-    move: oddOphidian.move,
+    move: reckoner.move,
   };
 
   return response.status(200).json(data);
