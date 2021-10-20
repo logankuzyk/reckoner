@@ -5,6 +5,7 @@ class Snake {
     this.health = snake.health;
     // Array of chess notation strings
     this.body = [];
+    this.moved = snake.moved;
   }
 }
 

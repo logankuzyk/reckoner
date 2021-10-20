@@ -89,7 +89,7 @@ class Board {
       this.food.push(this.coordToChess(food));
     });
     apiRequest.board.snakes.forEach((snake, index) => {
-      let snakeObject = new Snake(snake);
+      let snakeObject = new Snake({ moved: false, ...snake });
 
       for (let i = 0; i < snake.body.length; i++) {
         let body = snake.body[i];
