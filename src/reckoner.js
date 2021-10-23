@@ -1,7 +1,7 @@
 const Board = require('./board');
 const clone = require('lodash.clonedeep');
 
-class OddOphidian {
+class Reckoner {
   constructor(apiRequest) {
     this.minMaxDepth = 1;
     this.board = new Board(apiRequest);
@@ -11,7 +11,6 @@ class OddOphidian {
   }
 
   evaluatePosition(board, snakeId) {
-    console.log(snakeId);
     const snake = board.getSnake(snakeId);
     const head = snake.body[0];
     const tail = snake.body[snake.body.length - 1];
@@ -101,28 +100,29 @@ class OddOphidian {
     return score;
   }
 
-  max(board, position, depth) {
-    if (depth === 0) {
-      //snake to return value for is the last one to have moved
-      //need to go from smallest to biggest because that's the reverse of how it was called
-      const movedSnakes = board.snakes.filter((snake) => snake.moved);
-      const lastSnake = movedSnakes[movedSnakes.length - 1];
-      return this.evaluatePosition(board, lastSnake.id);
-    }
-    // pretty sure this is impossible
-    // if (!snakeId) {
-    //   // all snakes have moved this turn
-    //   return this.max(board, position, depth - 1);
+  max(board, depth, biggerSnakeId, move) {
+    // if (depth === 0) {
+    //   //snake to return value for is the last one to have moved
+    //   //need to go from smallest to biggest because that's the reverse of how it was called
+    //   // const movedSnakes = board.snakes.filter((snake) => snake.moved);
+    //   // const lastSnake = movedSnakes[movedSnakes.length - 1];
+    //   console.log(biggerSnakeId);
+    //   // return this.evaluatePosition(board, biggerSnakeId);
+    //   const snakeEvals = {};
+    //   for (const snake of board.snakes) {
+    //     snakeEvals[snake.id] = [move, this.evaluatePosition(board, snake.id)];
+    //   }
+    //   console.log({ returning: snakeEvals });
+    //   return snakeEvals;
     // }
-    const snake = board.snakes.filter((snake) => !snake.moved)[0];
 
-    if (
-      position === null ||
-      board.grid.get(position).isWall() ||
-      board.getSnake(snake.id).health === 0
-    ) {
-      // might need to change this to move onto then next snake
-      return -Infinity;
+    const snake = board.getSnake(biggerSnakeId);
+    const position = board.grid.get(snake.body[0])[move];
+
+    if (board.getSnake(snake.id).health === 0) {
+      return {
+        biggerSnakeId: [move, -Infinity],
+      };
     }
 
     const newBoard = clone(board);
@@ -143,39 +143,65 @@ class OddOphidian {
       newBoard.grid.get(newSnake.body[newSnake.body.length - 1]).weight = 1;
     }
 
-    let maxEval = -Infinity;
+    let snakesToMove = newBoard.snakes.filter((snake) => !snake.moved);
 
-    newBoard.snakes
-      .filter((snake) => !snake.moved)
-      .forEach((snake) => {
-        for (let move of this.possibleMoves) {
-          let moveEval = this.max(
-            newBoard,
-            newBoard.grid.get(snake.body[0])[move],
-            depth,
-          );
-          maxEval = Math.max(maxEval, moveEval);
+    let maxEval = {};
+    // newBoard.snakes.forEach((snake) => (maxEval[snake.id] = ['', -Infinity]));
+
+    if (snakesToMove.length === 0) {
+      newBoard.snakes.forEach((snake) => (snake.moved = false));
+      depth -= 1;
+      snakesToMove = newBoard.snakes;
+    }
+
+    if (depth === 0) {
+      maxEval[biggerSnakeId] = [
+        move,
+        this.evaluatePosition(newBoard, biggerSnakeId),
+      ];
+      return maxEval;
+    } else {
+      maxEval = {
+        [biggerSnakeId]: [move, this.evaluatePosition(newBoard, biggerSnakeId)],
+        ...this.moveRemainingSnakes(snakesToMove, newBoard, maxEval, depth),
+      };
+    }
+
+    return maxEval;
+  }
+
+  moveRemainingSnakes(snakesToMove, board, maxEval, depth) {
+    snakesToMove.forEach((snake) => {
+      for (let move of board.snakePossibleMoves(snake.id)) {
+        let moveEval = this.max(board, depth, snake.id, move);
+        if (!maxEval[snake.id]) {
+          maxEval[snake.id] = moveEval[snake.id];
         }
-      });
+        if (maxEval[snake.id][1] < moveEval[snake.id][1]) {
+          maxEval[snake.id] = [move, moveEval[snake.id]];
+        }
+      }
+    });
+    console.log(maxEval);
+
     return maxEval;
   }
 
   weighTheConsequences() {
-    let bestMove;
-    let maxEval = -Infinity;
+    const simulationBoard = clone(this.board);
+    let maxEval = {};
 
-    for (let move of this.possibleMoves) {
-      const moveEval = this.max(this.board, this.head[move], this.minMaxDepth);
-      console.log(`${move}: ${moveEval}`);
-      if (moveEval > maxEval) {
-        maxEval = moveEval;
-        bestMove = move;
-      }
-    }
+    // choose max of best snake then my best move
+    const move = this.moveRemainingSnakes(
+      this.board.snakes,
+      simulationBoard,
+      maxEval,
+      this.minMaxDepth,
+    ).me[0];
 
-    console.log(`Going ${bestMove}`);
-    return bestMove;
+    console.log(`Going ${move}`);
+    return move;
   }
 }
 
-module.exports = OddOphidian;
+module.exports = Reckoner;
