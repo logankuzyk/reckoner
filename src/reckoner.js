@@ -101,21 +101,6 @@ class Reckoner {
   }
 
   max(board, depth, biggerSnakeId, move) {
-    // if (depth === 0) {
-    //   //snake to return value for is the last one to have moved
-    //   //need to go from smallest to biggest because that's the reverse of how it was called
-    //   // const movedSnakes = board.snakes.filter((snake) => snake.moved);
-    //   // const lastSnake = movedSnakes[movedSnakes.length - 1];
-    //   console.log(biggerSnakeId);
-    //   // return this.evaluatePosition(board, biggerSnakeId);
-    //   const snakeEvals = {};
-    //   for (const snake of board.snakes) {
-    //     snakeEvals[snake.id] = [move, this.evaluatePosition(board, snake.id)];
-    //   }
-    //   console.log({ returning: snakeEvals });
-    //   return snakeEvals;
-    // }
-
     const snake = board.getSnake(biggerSnakeId);
     const position = board.grid.get(snake.body[0])[move];
 
@@ -146,7 +131,6 @@ class Reckoner {
     let snakesToMove = newBoard.snakes.filter((snake) => !snake.moved);
 
     let maxEval = {};
-    // newBoard.snakes.forEach((snake) => (maxEval[snake.id] = ['', -Infinity]));
 
     if (snakesToMove.length === 0) {
       newBoard.snakes.forEach((snake) => (snake.moved = false));
@@ -191,7 +175,7 @@ class Reckoner {
     const simulationBoard = clone(this.board);
     let maxEval = {};
 
-    // choose max of best snake then my best move
+    // Best snake chooses its best "board" then I choose my best move from there.
     const move = this.moveRemainingSnakes(
       this.board.snakes,
       simulationBoard,
