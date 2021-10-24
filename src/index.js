@@ -40,7 +40,7 @@ app.get('/', (request, response) => {
   return response.status(200).json({
     apiversion: '1',
     author: 'logankuzyk',
-    color: '#803A4B',
+    color: '#FF7034',
     head: 'default',
     tail: 'sharp',
   });
