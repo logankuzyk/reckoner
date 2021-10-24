@@ -23,7 +23,6 @@ app.post('/start', (request, response) => {
 });
 
 app.post('/move', (request, response) => {
-  console.log(`${request.body.turn} : ${request.body.game}`);
   const reckoner = new Reckoner(request.body);
   const data = {
     move: reckoner.move,
