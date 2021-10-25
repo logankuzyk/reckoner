@@ -104,12 +104,6 @@ class Reckoner {
     const snake = board.getSnake(biggerSnakeId);
     const position = board.grid.get(snake.body[0])[move];
 
-    if (board.getSnake(snake.id).health === 0) {
-      return {
-        biggerSnakeId: [move, -Infinity],
-      };
-    }
-
     const newBoard = clone(board);
     const newSnake = newBoard.getSnake(snake.id);
 
@@ -130,56 +124,63 @@ class Reckoner {
 
     let snakesToMove = newBoard.snakes.filter((snake) => !snake.moved);
 
-    let maxEval = {};
-
-    if (snakesToMove.length === 0) {
-      newBoard.snakes.forEach((snake) => (snake.moved = false));
-      depth -= 1;
-      snakesToMove = newBoard.snakes;
-    }
-
-    if (depth === 0) {
-      maxEval[biggerSnakeId] = [
-        move,
-        this.evaluatePosition(newBoard, biggerSnakeId),
-      ];
-      return maxEval;
-    } else {
-      maxEval = {
-        [biggerSnakeId]: [move, this.evaluatePosition(newBoard, biggerSnakeId)],
-        ...this.moveRemainingSnakes(snakesToMove, newBoard, maxEval, depth),
+    if (newBoard.getSnake(snake.id).health === 0) {
+      //kill snake
+      return {
+        [biggerSnakeId]: [move, -Infinity],
+        ...this.moveRemainingSnakes(snakesToMove, newBoard, depth),
       };
     }
 
-    return maxEval;
+    if (depth < 1) {
+      return {
+        [biggerSnakeId]: [move, this.evaluatePosition(newBoard, biggerSnakeId)],
+        ...this.moveRemainingSnakes(snakesToMove, newBoard, depth),
+      };
+    } else {
+      if (snakesToMove.length === 0) {
+        depth -= 1;
+        newBoard.snakes.forEach((snake) => (snake.moved = false));
+        snakesToMove = newBoard.snakes;
+      }
+      return {
+        ...this.moveRemainingSnakes(snakesToMove, newBoard, depth),
+      };
+    }
   }
 
-  moveRemainingSnakes(snakesToMove, board, maxEval, depth) {
-    snakesToMove.forEach((snake) => {
-      for (let move of board.snakePossibleMoves(snake.id)) {
-        let moveEval = this.max(board, depth, snake.id, move);
-        if (!maxEval[snake.id]) {
-          maxEval[snake.id] = moveEval[snake.id];
-        }
-        if (maxEval[snake.id][1] < moveEval[snake.id][1]) {
-          maxEval[snake.id] = [move, moveEval[snake.id]];
-        }
-      }
-    });
-    console.log(maxEval);
+  moveRemainingSnakes(snakesToMove, board, depth) {
+    let snakeEvals = {};
+    const snake = snakesToMove[0];
 
-    return maxEval;
+    if (!snake) {
+      return snakeEvals;
+    }
+    // console.log('hello');
+
+    for (let move of board.snakePossibleMoves(snake.id)) {
+      let moveEval = this.max(board, depth, snake.id, move);
+      if (!snakeEvals[snake.id]) {
+        snakeEvals[snake.id] = [move, -Infinity];
+      }
+      if (
+        moveEval[snake.id] &&
+        snakeEvals[snake.id][1] < moveEval[snake.id][1]
+      ) {
+        snakeEvals = moveEval;
+      }
+    }
+
+    return snakeEvals;
   }
 
   weighTheConsequences() {
     const simulationBoard = clone(this.board);
-    let maxEval = {};
 
     // Best snake chooses its best "board" then I choose my best move from there.
     const move = this.moveRemainingSnakes(
       this.board.snakes,
       simulationBoard,
-      maxEval,
       this.minMaxDepth,
     ).me[0];
 
